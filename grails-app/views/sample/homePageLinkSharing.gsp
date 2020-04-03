@@ -11,24 +11,26 @@
             <div class="card ">
                 <div class="card-header ">
                     <div class = "row">
-                    <div class = "col-6">
-                     Link Sharing Application
-                     </div>
-                     <div class = "col-3">
-                      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                      </div>
-                       <div class = "col-3">
-                       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        <div class = "col-6">
+                            Link Sharing Application
+                        </div>
+                        <g:if test="session.userSession">
+                            <div class = "col-3">
+                                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                            </div>
+                            <div class = "col-3">
+                                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                            </div>
+                        </g:if>
                     </div>
                 </div>
             </div>
                 <div class="card-body">
-
                     <div class="container-fluid ">
                         <div class="row">
                             <div class = "col-7">
                                 <g:render template = "recentShares" model="[posts: information]" />
-                                <g:render template = "topPosts" />
+                                <g:render template = "topPosts" model="[posts: information]" />
                             </div>
                             <div class = "col-5">
                                 <g:render template = "loginComponent" />

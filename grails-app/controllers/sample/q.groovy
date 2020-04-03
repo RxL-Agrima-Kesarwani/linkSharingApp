@@ -145,7 +145,7 @@ class q {
             }
             //render (text:" sucessfully loged in")
             redirect("action": "dashboard")
-            //redirect(view: "subscribeTopic.gsp")
+            //redirect(view: "_subscribeTopic.gsp")
         } else {
 
             flash.error = "Invalid username or email"
@@ -304,7 +304,7 @@ class q {
     }
 
     def subscribeTopicView() {
-        render(view: "subscribeTopic.gsp")
+        render(view: "_subscribeTopic.gsp")
     }
 
     def subscribeTopic() {

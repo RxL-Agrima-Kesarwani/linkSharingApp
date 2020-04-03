@@ -6,7 +6,7 @@
         </div>
     </div>
 
-    <div class="card-body"
+    <div class="card-body">
         <g:each  in="${posts}" var="post" >
             <g:render template="postSummary" model="[postData: post]" />
         </g:each>

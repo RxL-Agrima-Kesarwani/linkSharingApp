@@ -14,25 +14,25 @@ class SampleController {
     static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
 
     def index() {
-        render(view: "homePageLinkSharing.gsp")
+        redirect(action: "homePage")
     }
 
     def homePage() {
         def c = ResourceData.createCriteria()
-        def results = c.list {
+        def recentPosts = c.list {
             maxResults(5)
             order("dateCreated", "desc")
-
         }
-        render(view: "homePageLinkSharing.gsp", model: [information: results])
-        //render ( view : "homePage.gsp")
-        //RegisterForm obj = new RegisterForm(fname:"aaa" , lname :"asdsdsd")
-        // Users obj=new Users(userName: "aa",lastName :"xcx")
-        //obj.save()//domain ka naam
+        render(view: "homePageLinkSharing.gsp", model: [information: recentPosts])
+
     }
 
     def dashboard() {
-        render(view: "dashboard.gsp")
+        if (session.userSession) {
+            render(view: "dashboard.gsp")
+        } else {
+            redirect(action: "homePage")
+        }
     }
 
     def saveUser() {
@@ -52,6 +52,7 @@ class SampleController {
             MultipartFile multipartFile = params.photo
             user.photo = multipartFile.bytes
         }
+
         //user.validate()
 
         println params
@@ -77,7 +78,6 @@ class SampleController {
             String encoded = Base64.getEncoder().encodeToString(users1.photo)
             session.setAttribute("userPhoto", encoded)
         }
-
         println " SESSION"
 
         if (users1 != null || users2 != null) {
@@ -94,7 +94,7 @@ class SampleController {
             }
             //render (text:" sucessfully loged in")
             redirect("action": "dashboard")
-            //redirect(view: "subscribeTopic.gsp")
+            //redirect(view: "_subscribeTopic.gsp")
         } else {
 
             flash.error = "Invalid username or email"
@@ -151,7 +151,7 @@ class SampleController {
             //topic.validate(["topicName", "visibility"])
             println params
             topic.save(flush: true)
-            subscribeTopic()
+            subscribeTopic()//as creater of topic will automatically subscribe to it as well
             render(text: "topic saved")
         } else { //When topic already exists for that user
             render(text: "topic  already exists")
@@ -350,9 +350,8 @@ class SampleController {
         }
     }
 
-
-  def subscribeTopicView() {
-        render(view: "subscribeTopic.gsp")
+    def subscribeTopicView(){
+        render (view:"subscribeTopic")
     }
 
     def subscribeTopic() {
@@ -363,13 +362,13 @@ class SampleController {
         println(loggedInUser.id)
         println("topic ki id")
         println(topic.id)
-        int seriousness = SeriousnessEnum.VERY_SERIOUS.getVal()
+        int seriousness = SeriousnessEnum.VERY_SERIOUS.getVal()//as if not mentioned it has to be very serious
         if (params.containsKey('selectType')) {
             seriousness = params.selectType.toInteger()
         }
         if (topic.visibility == VisibilityEnum.PUBLIC.getVal()) {
-            Subscription subscription = new Subscription(subscribedTopic: params.topicnamelabel, seriousness: seriousness,
-                                                            user: loggedInUser.id, topic: topic.id)
+            Subscription subscription = new Subscription(subscribedTopic: params.topicnamelabel,
+                    seriousness: seriousness, user: loggedInUser.id, topic: topic.id)
 
             subscription.validate()
             if (subscription.hasErrors()) {
@@ -419,18 +418,43 @@ class SampleController {
 //        def topics= Topic.list()
 //        [topics:topics]
 //    }
+//    def publicTopicsNotCreatedByUser(){
+//        Users loggedInUser = Users.findByUserName(session.userSession)
+//        List publicTopicsNotCreatedByUser = Topic.createCriteria().list(){
+//            and{
+//                not{'in' {"users" ,loggedInUser}}
+//                eq("visibility", VisibilityEnum.PUBLIC.getVal())
+//            }
+//        }
+//        println(publicTopicsNotCreatedByUser)
+//        render(text :publicTopicsNotCreatedByUser )
+//    }
+
 
     def topicsCreatedByParticularUser(){
+        int count=0;
         Users loggedInUser = Users.findByUserName(session.userSession)
+
+        List list = Topic.createCriteria().list(){
+            eq('user',loggedInUser)
+                   }
+
+
+
         List users = Topic.findAllByUser(loggedInUser)
+//        if(users.topicName)
+//        {
+//            count++
+//        }
         println(users)
         println(Topic)
+        println ("no. of topics " + count)
        // List list []
        // model: [list.]
 
-       render (view:"abc", model: [ list: users.topicName])
+       //render (view:"abc", model: [ list: users.topicName])
        // def t = users.topicName.list()
-        //render(text: users.topicName)
+        render(users.topicName)
         //println(t)
     }
     def qwer(){
@@ -457,11 +481,32 @@ class SampleController {
 
     }
     def markAsRead(){
-        println params
-        render (text:params)
-      //  resourceService.markRead(params)
+
+        Users loggedInUser = Users.findByUserName(session.userSession)
+        List readingItem = ReadingItem.findAllById(loggedInUser)
+        println(loggedInUser)
+        println(readingItem)
+        readingItem(resource,user: loggedInUser,isRead: true)
+        //LinkResource linkResource  LinkResource(link: params.link)
+       // Topic topic = Topic.findByTopicName(params.topic)
+       // println(topic)
+       // ReadingItem readingItem = new ReadingItem(resource,  loggedInUser)
+       // ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic, linkResource: linkResource)
+        println ("reading item " + readingItem)
+//
+
+//        linkResource = linkResource.save(flush: true, failOnError: true)
+//        println(linkResource.id)
+        //ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic, linkResource: linkResource)
+        //ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic)
+        println("     zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+       // println(resourceData)
+
+       // println params
+        render (text:"Marked As Read Successfully !!! ")
+
         //flash.message = "Marked As Read Successfully !!! "
-        //redirect controller: 'user', action: 'dashboard'
+
 
     }
 

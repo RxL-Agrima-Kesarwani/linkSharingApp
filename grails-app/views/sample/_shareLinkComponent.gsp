@@ -10,34 +10,34 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                    <g:uploadForm name="shareLink"  action = "shareLink">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="link">Link*</span>
+                        <g:uploadForm name="shareLink"  action = "shareLink">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="link">Link*</span>
+                                </div>
+                                <input id="username" type="text" class="form-control" placeholder="Link"  name="link">
                             </div>
-                            <input id="username" type="text" class="form-control" placeholder="Link"  name="link">
-                        </div>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend ">
-                                <span class="input-group-text" id="description">Description*</span>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend ">
+                                    <span class="input-group-text" id="description">Description*</span>
+                                </div>
+                                <input id="description" type="text" class="form-control" placeholder="Description"  name="description">
                             </div>
-                            <input id="description" type="text" class="form-control" placeholder="Description"  name="description">
-                        </div>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend ">
-                                
-                                <span class="input-group-text" id="topic">Topic*</span>
-                            </div>
-                            <input id="description" type="text" class="form-control" placeholder="Topic"  name="topic">
-                        </div>
-<button type="submit" class="btn btn-success">Share</button>
-                    </g:uploadForm>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="col-6">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend ">
 
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                    <span class="input-group-text" id="topic">Topic*</span>
+                                </div>
+                                <input id="description" type="text" class="form-control" placeholder="Topic"  name="topic">
+                            </div>
+                            <button type="submit" class="btn btn-success">Share</button>
+                        </g:uploadForm>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>

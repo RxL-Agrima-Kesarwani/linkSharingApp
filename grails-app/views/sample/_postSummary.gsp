@@ -6,8 +6,10 @@
         <div class="col-10">
             <div class="container-fluid">
                 <div class="row d-flex">
-                    <div class="">${postData.user.firstName}</div>
-                     <div class="">${postData.user.lastName}</div>
+                    <div class="">
+                        ${postData.user.firstName + " "}
+                    </div>
+                    <div class="">${postData.user.lastName}</div>
                     <div class="text-muted p-8 mx-2">@${postData.user.userName}</div>
                     <div class="text-muted p-8 mx-2">8 mins</div>
                     <div class="ml-auto text-info">${postData.topicName.topicName}</div>
