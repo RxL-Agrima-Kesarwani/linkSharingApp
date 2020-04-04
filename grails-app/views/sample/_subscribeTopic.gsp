@@ -11,6 +11,14 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                    <g:if test="${flash.error}">
+                                      <div class="alert alert-primary" role="alert" >
+                                        ${flash.error}</div>
+                                      </g:if>
+                                       <g:if test="${flash.message}">
+                                                        <div class="alert alert-primary" role="alert" >
+                                                          ${flash.message}</div>
+                                                        </g:if>
                         <g:uploadForm name="createTopic"  action = "subscribeTopicView">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
@@ -20,12 +28,12 @@
                             </div>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend ">
-                                    <span class="input-group-text" id="selectType">Select type      </span>
+                                    <span class="input-group-text" id="seriousness">Select type      </span>
                                 </div>
-                                <select name="selectType" >
-                                    <option selected value= "2">Very Serious</option>
-                                    <option value="1">Serious</option>
-                                    <option value="0">Casual</option>
+                                <select name="seriousness" >
+                                    <option selected value= "VERY_SERIOUS">Very Serious</option>
+                                    <option value="SERIOUS">Serious</option>
+                                    <option value="CASUAL">Casual</option>
                                 </select>
                             </div>
                             <div class="row">

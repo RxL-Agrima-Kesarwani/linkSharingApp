@@ -3,10 +3,11 @@ package sample
 import org.springframework.web.multipart.MultipartFile
 
 class SampleController {
+     def mailService
        static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
 
     def index() {
-        redirect(action: "homePage")
+      //  redirect(action: "homePage")
     }
 
     def homePage() {
@@ -21,42 +22,43 @@ class SampleController {
 
     def dashboard() {
         if (session.userSession) {
-            render(view: "dashboard.gsp")
+            List <Topic> topicList = Topic.list()
+            render(view: "dashboard.gsp", model: [topicList:topicList])
         } else {
             redirect(action: "homePage")
         }
     }
 
-    def saveUser() {
+    def register() {
         println params
         def statement = "happy"
-        def requiredParams = ['firstnamelabel', 'lastnamelabel', 'emaillabel', 'usernamelabel', 'passwordlabel', 'confirmpasswordlabel']
+        def requiredParams = ['firstnamelabel', 'lastnamelabel', 'emaillabel', 'usernamelabel', 'passwordlabel',
+                              'confirmpasswordlabel']
         requiredParams.each { singleParam ->
             if (!params.containsKey(singleParam)) {
-                render(text: "login failed")
-
+                flash.error = "Registration Failed.Kindly register again..."
+                redirect(action : "homePage")
                 return 0
             }
 
         }
-        User user = new User(firstName: params.firstnamelabel, lastName: params.lastnamelabel, email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel, confirmPassword: params.confirmpasswordlabel)
+        Person user = new Person(firstName: params.firstnamelabel, lastName: params.lastnamelabel,
+                email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel,
+                confirmPassword: params.confirmpasswordlabel)
         if (params.photo) {
             MultipartFile multipartFile = params.photo
             user.photo = multipartFile.bytes
         }
-
         //user.validate()
-
         println params
         if (user.save(flush: true)) {
-            //flash.message = "SUCCESSFULLY REGISTERED"
+            flash.message = "SUCCESSFULLY REGISTERED"
             // render(text: "succesfully registered")
-            redirect(view: "dashboard")
+            redirect(action: "homePage")
 
         } else {
-
             flash.error = "Registration Failed.Kindly register again..."
-            redirect(view: "homePage")
+            redirect(action: "homePage")
             //render(text: "fail to put in DB")
         }
 
@@ -64,27 +66,20 @@ class SampleController {
 
     def login() {
 
-        User users1 = User.findByUserNameAndPassword(params.usernamelabel, params.passwordlabel)
-        User users2 = User.findByEmailAndPassword(params.usernamelabel, params.passwordlabel)
-        if (users1.photo) {
-            String encoded = Base64.getEncoder().encodeToString(users1.photo)
+        Person loggedInUser = Person.findByUserNameAndPassword(params.usernamelabel,
+                params.passwordlabel)
+       // Person users2 = Person.findByEmailAndPassword(params.usernamelabel, params.passwordlabel)
+        if (loggedInUser?.photo) {
+            String encoded = Base64.getEncoder().encodeTopasswordlabelString(loggedInUser.photo)
             session.setAttribute("userPhoto", encoded)
         }
         println " SESSION"
 
-        if (users1 != null || users2 != null) {
-            if (users1 != null) {
-                session.userSession = users1.userName
-                //redirect (view : "dashboard.gsp")
 
-            } else if (users2 != null) {
-                session.userSession = users2.userName
-                //redirect (view : "dashboard.gsp")
-                println("inside ELSE iffff")
-                println ">>>>>> users2.userName"
-                println ">>>>>> users2.userNamelabel"
-            }
-            //render (text:" sucessfully loged in")
+
+        if (loggedInUser != null) {
+            session.userSession = loggedInUser.userName
+             //render (text:" sucessfully loged in")
             redirect("action": "dashboard")
             //redirect(view: "_subscribeTopic.gsp")
         } else {
@@ -126,32 +121,47 @@ class SampleController {
 //    }
 
     def addTopic() {
-        User loggedInUser = User.findByUserName(session.userSession)
-        Topic topic = new Topic(name: params.topicnamelabel, visibility: params.visibility, user: loggedInUser.id)
-        Topic topicAdded = Topic.findByTopicNameAndUser(params.topicnamelabel,loggedInUser)
+        Person loggedInUser = Person.findByUserName(session.userSession)
+        Topic topicAdded = Topic.findByNameAndUser(params.topicnamelabel,loggedInUser)
         println(topicAdded)
-        if (topicAdded == null) { //When user is creating topic
-            println("     >>>>>>>")
-            println("logged in user")
-            println(loggedInUser.id)
-            topic.validate()
-            if (topic.hasErrors()) {
-                topic.errors.allErrors.each {
-                    println it
-                }
-            }
-            //topic.validate(["topicName", "visibility"])
-            println params
+        if (topicAdded) {
+            //When user is creating topic
+            flash.error = " topic already exists "
+            redirect(action: "dashboard")
+            return
+        }
+
+         else {
+            Topic topic = new Topic(name: params.topicnamelabel, visibility:VisibilityEnum."${params.visibility}",
+                    user: loggedInUser.id,createdBy: loggedInUser)
+
+        println("     >>>>>>>")
+        println("logged in user")
+        println(loggedInUser.id)
+
+        if (topic.validate()) {
             topic.save(flush: true)
-            subscribeTopic()//as creater of topic will automatically subscribe to it as well
-            render(text: "topic saved")
-        } else { //When topic already exists for that user
-            render(text: "topic  already exists")
+           // subscribeTopic()
+            subscribe(loggedInUser,topic,null)
+            flash.message = "Successfully created and subscribed to topic"
+            redirect (action: "dashboard")
+            return
+            }
+
+            else{  topic.errors.allErrors.each {
+            println it }
+            flash.error = "Unable to add topic"
+            redirect (action: "dashboard")
+            return
+        }
+        //topic.validate(["topicName", "visibility"])
+
+
         }
     }
 
     def deleteTopic() {
-        User loggedInUser = User.findByUserName(session.userSession)
+        Person loggedInUser = Person.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topicnamelabel)
         println(topic)
         //Topic topic = new Topic(params.topicnamelabel, visibility: params.visibility, user: loggedInUser.id)
@@ -185,46 +195,38 @@ class SampleController {
      }*/
 
     def shareDocumentFinal() {
-        User loggedInUser = User.findByUserName(session.userSession)
-        Topic topic = Topic.findByTopicName(params.topiclabel)
+        Person loggedInUser = Person.findByUserName(session.userSession)
+        Topic topic = Topic.findById(params.long('topiclabel'))
         println(topic)
-        DocumentResource documentResource = new DocumentResource(document: params.document)
-        def f = request.getFile('document')
-        println(",,,,,,,,,,,,,,,," + f)
-        if (f.empty) {
-            flash.message = 'file cannot be empty'
-            render(text: 'choose another file')
+        println(params)
+        if(topic && params.document){
+            println ("inside if")
+            MultipartFile multipartFile = params.document
+            String filePath = "/home/agrima/Documents/${multipartFile.getOriginalFilename()}"
+            File file = new File(filePath)
+            file.bytes = multipartFile.bytes
+            DocumentResource documentResource = new DocumentResource(filePath:filePath,name:"resource1",
+                                                description: "docAdded",createdBy: loggedInUser,topic:topic)
+            if (documentResource.validate()) {
+                topic.addToResources(documentResource)
+                topic.save()
+                println("after save")
+                documentResource.save(flush: true,failOnError: true)
+                println("document added successfully")
+                flash.message = 'document added succesfully'
+                redirect(action : "dashboard")
+                return
+            }
+        }
+        else{
+            flash.error  = " Unable to add document"
+            redirect(action : "dashboard")
             return
         }
 
-        //f.putAt(new File('/home/agrima/Documents/document.txt'))
-        f.transferTo(new File('/home/agrima/Documents/document.txt'))
-        response.sendError(200, 'Done')
 
-        //if (params.document) {
-        //  upload()
-        //}
-        // MultipartFile multipartFile = params.document
-        //documentResource.document = multipartFile.bytes
-        documentResource = documentResource.save(flush: true, failOnError: true)
-        println("DOCUMENT")
-        println(documentResource)
-
-        println("DOC" + documentResource)
-        ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id,
-                name: params.topic, documentResource: documentResource)
-        println("RES" + resourceData)
-        println(topic)
-        // println(params.topic)
-        //println(documentResource.id)
-        //println(topic.topicName)
-        println(params)
-        documentResource.validate()
-        if (documentResource.hasErrors()) {
-            documentResource.errors.allErrors.each {
-                println it
             }
-        }
+
 
         // def f = params.document
         //render f.inputStream.text
@@ -234,17 +236,17 @@ class SampleController {
 //            //resourceData.name = doc.bytes
 //
 //        }
-        resourceData.save(flush: true, failOnError: true)
+       // resourceData.save(flush: true, failOnError: true)
         // shareDocument.validate(["topicName", "visibility"])
 
 //        println params
 //        linkResource.save(flush: true)
-        println(".................................................................................")
-        println("topic ki id")
-        println(topic.id)
-        render(text: "Document saved")
-
-    }
+//        println(".................................................................................")
+//        println("topic ki id")
+//        println(topic.id)
+//        render(text: "Document saved")
+//
+//    }
 
 
 
@@ -286,7 +288,7 @@ class SampleController {
 
     def shareLink() {
 
-        User loggedInUser = User.findByUserName(session.userSession)
+        Person loggedInUser = Person.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topic)
         println(topic)
         LinkResource linkResource = new LinkResource(url: params.url)
@@ -321,7 +323,7 @@ class SampleController {
     }
 
     def deleteLink() {
-        User loggedInUser = User.findByUserName(session.userSession)
+        Person loggedInUser = Person.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topicnamelabel)
         //  LinkResource linkResource = LinkResource
         println(topic)
@@ -347,63 +349,63 @@ class SampleController {
     }
 
     def subscribeTopic() {
-        User loggedInUser = User.findByUserName(session.userSession)
-        Topic topic = Topic.findByTopicName(params.topicnamelabel)
+        Person loggedInUser = Person.findByUserName(session.userSession)
+        Topic topic = Topic.findByName(params.topicnamelabel)
         println("   >>>>>>>")
         println("logged in user")
         println(loggedInUser.id)
         println("topic ki id")
         println(topic.id)
-        int seriousness = SeriousnessEnum.VERY_SERIOUS.getVal()//as if not mentioned it has to be very serious
-        if (params.containsKey('selectType')) {
-            seriousness = params.selectType.toInteger()
-        }
-        if (topic.visibility == VisibilityEnum.PUBLIC.getVal()) {
-            Subscription subscription = new Subscription(topic: topic,
-                    seriousness: seriousness, user: loggedInUser.id)
+        //String seriousness = SeriousnessEnum.VERY_SERIOUS//as if not mentioned it has to be very serious
+        subscribe(loggedInUser,topic,params.seriousness)
+        redirect(action: "dashboard")
 
-            subscription.validate()
-            if (subscription.hasErrors()) {
-                subscription.errors.allErrors.each {
-                    println it
-                }
+
+    }
+    def subscribe(Person loggedInUser,Topic topic,String seriousness){
+       // if (topic.visibility == VisibilityEnum.PUBLIC.toString()) {
+            Subscription subscription = new Subscription(topic: topic,
+                    user: loggedInUser.id)
+        if(seriousness){
+subscription.seriousness = SeriousnessEnum."${seriousness}"
+        }
+
+
+            if (subscription.validate()) {
+                subscription.save(flush: true)
+                flash.message = "Subscribed"
             }
             //topic.validate(["topicName", "visibility"])
             println params
-            subscription.save(flush: true)
+
             println("...................visible")
             println(topic.visibility)
             //topic.validate(["topicName", "visibility"])
 
             //render(text: "topic subscribed")
             //render(text: "subscribed")
-        } else if (topic.visibility == VisibilityEnum.PRIVATE.getVal()) {
-            println("TOPIC ID: " )
-            //println(Topic.findByUserName)
-            println("logged in user")
-            println(loggedInUser)
-            if (Topic.findByUserAndTopicName(loggedInUser, topic.name)) {
-                Subscription subscription = new Subscription(topic: topic, seriousness: seriousness,
-                        user: loggedInUser.id)
+        //}
+//        else if (topic.visibility == VisibilityEnum.PRIVATE.toString()) {
+//            println("TOPIC ID: " )
+//            //println(Topic.findByUserName)
+//            println("logged in user")
+//            println(loggedInUser)
+//            if (Topic.findByUserAndTopicName(loggedInUser, topic.name)) {
+//                Subscription subscription = new Subscription(topic: topic,
+//                        seriousness: SeriousnessEnum."${seriousness}",
+//                        user: loggedInUser.id)
+//
+//
+//                if (subscription.validate()) {
+//                    subscription.save(flush: true)
+//                }
+//                //topic.validate(["topicName", "visibility"])
+//                println params
+//
+//               // render (text: "subscribed")
+//            }
+//        }
 
-                subscription.validate()
-                if (subscription.hasErrors()) {
-                    subscription.errors.allErrors.each {
-                        println it
-                    }
-                }
-                //topic.validate(["topicName", "visibility"])
-                println params
-                subscription.save(flush: true)
-                render (text: "subscribed")
-            } else {
-                render(text: "u can subscribe only when topic is public")
-                println("u can subscribe only when topic is public")
-            }
-        } else {
-            render(text: "403: Bad params")
-            println("403: Bad params")
-        }
 
     }
 //    def showTopics() {
@@ -425,7 +427,7 @@ class SampleController {
 
     def topicsCreatedByParticularUser(){
         int count=0;
-        User loggedInUser = User.findByUserName(session.userSession)
+        Person loggedInUser = Person.findByUserName(session.userSession)
 
         List list = Topic.createCriteria().list(){
             eq('user',loggedInUser)
@@ -454,7 +456,7 @@ class SampleController {
     }
 
     def subscribedTopicsOfParticularUser() {
-        User loggedInUser = User.findByUserName(session.userSession)
+        Person loggedInUser = Person.findByUserName(session.userSession)
         println ("users......................")
         println (loggedInUser)
         List users =Subscription.findAllByUser(loggedInUser)
@@ -474,7 +476,7 @@ class SampleController {
     }
     def markAsRead(){
 
-        User loggedInUser = User.findByUserName(session.userSession)
+        Person loggedInUser = Person.findByUserName(session.userSession)
         List readingItem = ReadingItem.findAllById(loggedInUser)
         println(loggedInUser)
         println(readingItem)
@@ -571,8 +573,8 @@ class SampleController {
 //    }
 //
     def shareDoc() {
-        User user = User.findByUserName(session.userSession)
-        Topic topic = Topic.findByTopicName(params.topiclabel)
+        Person loggedInUser = Person.findByUserName(session.userSession)
+        Topic topic = Topic.findByName(params.topiclabel)
         def file1 = request.getFile("document")
         String dir1 = new Date()
         String dir2 = dir1.split(" ").join("")
@@ -586,7 +588,7 @@ class SampleController {
 
 
     def subscribedTopicOfUser() {
-        User loggedInUser = User.findByUserName(session.userSession)
+        Person loggedInUser = Person.findByUserName(session.userSession)
         println(loggedInUser)
         def val = loggedInUser.id
 //        List<Users> usersList = Users.findAll()
@@ -599,11 +601,99 @@ class SampleController {
         }
         //println(Users.findAllWhere()*.topicName)
     }
+    def forgotPasswordView(){
+        render (view: "forgotPasswordForm")
+    }
     def forgotPassword(){
-        User user = User.findByUserNameOrEmail(params.usernamelabel)
-        println (user)
-        redirect(controller: 'EmailSender', action: 'send')
+        Person user = Person.findByUserName(params.usernamelabel)
+       if (user){
+               mailService.sendMail {
+                   to user.email
+                   subject "Reset Password"
+                   html  view: "/sample/_resetPassword", model: [userName: user.userName, resetUrl:
+                           "http://localhost:8060/sample/resetPassword?userName=${user.userName}"]
 
+               }
+               flash.message = "Reset email send successfully"
+               redirect (action:"forgotPasswordView")
+              // render("sent")
+           }
+
+        else{
+          flash.error = "Unable to find user by user name: ${params.usernamelabel}"
+           redirect (action:"forgotPasswordView")
+       }
+
+
+    }
+    def resetPasswordView(){
+         render(view: "resetPasswordForm")
+    }
+//    def resetPassword() {
+//        Person user = Person.findByUserName(session.userSession)
+//        //render("abcd")
+//        //println(user)
+//        //Person user = Person.findByUserName(userName: params.usernamelabel, password: params.passwordlabel,
+//                //confirmPassword: params.confirmpasswordlabel)
+//        println("user " + user)
+//        if(user.password.equals(user.confirmPassword)){
+//            user.password = params.passwordlabel
+//        }
+//   else{
+//       flash.error = "Password and confirm password does not match"
+//    }
+//
+//    }
+
+
+    def resetPassword() {
+         def requiredParams = ['usernamelabel', 'passwordlabel','confirmpasswordlabel']
+        requiredParams.each { singleParam ->
+            if (!params.containsKey(singleParam)) {
+                flash.error = "Enter all values"
+                return 0
+            }
+        }
+        Person user = Person.findByUserName(params.usernamelabel)
+
+        if(user){
+            user.password=params.passwordlabel
+            user.validate()
+            if(user.save(flush: true)){
+                flash.message = "SUCCESSFULLY UPDATED PASSWORD"
+               // render(text: "succesfully updated password")
+                redirect(action: "homePage")
+
+            }
+            else {
+
+                flash.error = "Failed to update password .Try again"
+                //redirect(action: "resetPasswordView")
+               // render("Failed to update password .Try again")
+                redirect(action : "resetPasswordView")
+            }
+
+        }
+//        println("reset")
+//         user.validate()
+//        println params
+//        def userName = params.usernamelabel
+//        def password = params.passwordlabel
+//        Person.executeUpdate("update Person set password = '${password}' where userName = '${userName }'")
+//        println("done")
+
+        /*if (user.save(flush: true)) {
+            println("inside if")
+            flash.message = "SUCCESSFULLY UPDATED PASSWORD"
+             render(text: "succesfully updated password")
+            //redirect(action: "homePage")
+
+        } else {
+            println("inside else")
+            flash.error = "Failed to update password .Try again"
+            //redirect(action: "resetPasswordView")
+            render("Failed to update password .Try again")
+        }*/
 
     }
 }

@@ -1,19 +1,24 @@
 <div class="container">
-
-    <!-- Trigger the modal with a button -->
-    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addTopicModal">Add Topic</button>
-    <!-- Modal -->
-    <div class="modal fade" id="addTopicModal" role="dialog">
+   <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addTopicModal">Add Topic</button>
+      <div class="modal fade" id="addTopicModal" role="dialog">
         <div class="modal-dialog">
-
-            <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
+                    <h5 class="modal-title">Add Topic</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
 
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                  <g:if test="${flash.error}">
+                  <div class="alert alert-primary" role="alert" >
+                    ${flash.error}</div>
+                  </g:if>
+                   <g:if test="${flash.message}">
+                                    <div class="alert alert-primary" role="alert" >
+                                      ${flash.message}</div>
+                                    </g:if>
+
                         <g:uploadForm name="createTopic"  action = "addTopic">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
@@ -26,8 +31,8 @@
                                     <span class="input-group-text" id="description">Visibility*      </span>
                                 </div>
                                 <select name="visibility" id="visibility">
-                                    <option selected value="1">Public</option>
-                                    <option value="0">Private</option>
+                                    <option selected value="PUBLIC">Public</option>
+                                    <option value="PRIVATE">Private</option>
                                 </select>
                             </div>
                             <div class="row">

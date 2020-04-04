@@ -1,5 +1,5 @@
 
-<%@ page import="linksharingapplication.Subscription" %>
+
 <!DOCTYPE html>
 <html>
 	<head>

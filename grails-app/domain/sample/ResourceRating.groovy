@@ -2,8 +2,8 @@ package sample
 
 class ResourceRating {
     Integer score
-    User user
+    Person user
     ResourceData resource
 
-    static belongsTo = [user: User, resource:ResourceData]
+    static belongsTo = [user: Person, resource:ResourceData]
 }

@@ -2,7 +2,7 @@ package sample
 
 class UrlMappings {
     static mappings = {
-        "/"(controller:"sample")
+        "/"(controller:"Login",action:"homePage")
         "/$controller/$action?/$id?"{
             constraints {
                 // apply constraints here

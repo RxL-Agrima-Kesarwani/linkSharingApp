@@ -4,7 +4,15 @@
     </div>
     <div class="card-body">
         <div class="form-group">
-        <g:uploadForm name="register"  action = "saveUser">
+        <g:if test="${flash.error}">
+                          <div class="alert alert-primary" role="alert" >
+                            ${flash.error}</div>
+                          </g:if>
+                           <g:if test="${flash.message}">
+                                            <div class="alert alert-primary" role="alert" >
+                                              ${flash.message}</div>
+                                            </g:if>
+        <g:uploadForm name="register"  action = "register">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
 
@@ -56,10 +64,7 @@
 
             <button type="submit" class="btn btn-secondary">Register</button>
 
-<g:if test="${flash.error}">
-<div class="alert alert-primary" role="alert" >
-  ${flash.error}</div>
-</g:if>
+
 
 
 

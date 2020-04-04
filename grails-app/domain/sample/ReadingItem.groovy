@@ -2,9 +2,9 @@ package sample
 
 class ReadingItem {
     ResourceData resource
-    User user
+    Person user
     Boolean isRead = Boolean.FALSE
 
-    static belongsTo = [user: User, resource:ResourceData]
+    static belongsTo = [user: Person, resource:ResourceData]
 }
 

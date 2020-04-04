@@ -6,11 +6,20 @@
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
+                  <h5 class="modal-title">Share Document</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <g:uploadForm name="shareDocument"  action = "shareDoc">
+                    <g:if test="${flash.error}">
+                                      <div class="alert alert-primary" role="alert" >
+                                        ${flash.error}</div>
+                                      </g:if>
+                                       <g:if test="${flash.message}">
+                                                        <div class="alert alert-primary" role="alert" >
+                                                          ${flash.message}</div>
+                                                        </g:if>
+                        <g:uploadForm name="shareDocument"  action = "shareDocumentFinal">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="document">Document*</span>
@@ -28,7 +37,8 @@
 
                                     <span class="input-group-text" id="topic">Topic*</span>
                                 </div>
-                                <input id="description" type="text" class="form-control" placeholder="Topic"  name="topiclabel">
+
+                                <g:select from="${topicList}" class="form-control"  name="topiclabel"   optionKey="id" optionValue="name" />
                             </div>
                             <div class="row">
                                 <div class="col-8">

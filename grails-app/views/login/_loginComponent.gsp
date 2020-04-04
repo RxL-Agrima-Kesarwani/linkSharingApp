@@ -14,6 +14,7 @@
             <div class="card-body">
             <div class="form-group">
                  <g:uploadForm name="login"  action = "login">
+
                     <div class="input-group mb-3">
                          <div class="input-group-prepend">
                             <span class="input-group-text" id="usernamelabel">Username/Email*</span>
@@ -32,7 +33,7 @@
                                               Forgot Password</g:link>
                     </div>
                     <div class="col-4">
-                        <button type="submit" class="btn btn-success">Submit</button>
+                        <button type="submit" class="btn btn-success">Login</button>
                     </div>
                 </div>
                  </g:uploadForm>
