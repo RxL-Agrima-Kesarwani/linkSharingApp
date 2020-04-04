@@ -1,11 +1,14 @@
 package sample
 
 class Subscription {
-    String subscribedTopic
+    Topic topic
+   //SeriousnessEnum seriousness = SeriousnessEnum.VERY_SERIOUS
     Integer seriousness
+    User user
     Date dateCreated
 
-    static belongsTo = [user: Users, topic:Topic]
+
+    static belongsTo = [user: User, topic:Topic]
 
     static mapping = {
         sort "user"

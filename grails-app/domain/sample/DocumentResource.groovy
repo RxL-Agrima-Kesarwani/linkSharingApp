@@ -1,11 +1,10 @@
 package sample
 
-import org.springframework.web.multipart.MultipartFile
-
-class DocumentResource {
+class DocumentResource extends  ResourceData{
     // String document
     //Byte [] document
-    byte[] document
+    Byte[] document
+    String filePath
 
     static constraints = {
         // Limit upload file size to 2MB

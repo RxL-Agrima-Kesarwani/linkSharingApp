@@ -1,17 +1,9 @@
 package sample
 
-import grails.converters.JSON
-import grails.transaction.Transactional
-import grails.validation.ValidationException
-import org.apache.catalina.User
 import org.springframework.web.multipart.MultipartFile
 
-import javax.annotation.Resource
-
 class SampleController {
-
-
-    static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
+       static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
 
     def index() {
         redirect(action: "homePage")
@@ -24,7 +16,7 @@ class SampleController {
             order("dateCreated", "desc")
         }
         render(view: "homePageLinkSharing.gsp", model: [information: recentPosts])
-
+       // render(view: "homePageLinkSharing.gsp")
     }
 
     def dashboard() {
@@ -47,7 +39,7 @@ class SampleController {
             }
 
         }
-        Users user = new Users(firstName: params.firstnamelabel, lastName: params.lastnamelabel, email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel, confirmPassword: params.confirmpasswordlabel)
+        User user = new User(firstName: params.firstnamelabel, lastName: params.lastnamelabel, email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel, confirmPassword: params.confirmpasswordlabel)
         if (params.photo) {
             MultipartFile multipartFile = params.photo
             user.photo = multipartFile.bytes
@@ -72,8 +64,8 @@ class SampleController {
 
     def login() {
 
-        Users users1 = Users.findByUserNameAndPassword(params.usernamelabel, params.passwordlabel)
-        Users users2 = Users.findByEmailAndPassword(params.usernamelabel, params.passwordlabel)
+        User users1 = User.findByUserNameAndPassword(params.usernamelabel, params.passwordlabel)
+        User users2 = User.findByEmailAndPassword(params.usernamelabel, params.passwordlabel)
         if (users1.photo) {
             String encoded = Base64.getEncoder().encodeToString(users1.photo)
             session.setAttribute("userPhoto", encoded)
@@ -134,8 +126,8 @@ class SampleController {
 //    }
 
     def addTopic() {
-        Users loggedInUser = Users.findByUserName(session.userSession)
-        Topic topic = new Topic(topicName: params.topicnamelabel, visibility: params.visibility, user: loggedInUser.id)
+        User loggedInUser = User.findByUserName(session.userSession)
+        Topic topic = new Topic(name: params.topicnamelabel, visibility: params.visibility, user: loggedInUser.id)
         Topic topicAdded = Topic.findByTopicNameAndUser(params.topicnamelabel,loggedInUser)
         println(topicAdded)
         if (topicAdded == null) { //When user is creating topic
@@ -159,7 +151,7 @@ class SampleController {
     }
 
     def deleteTopic() {
-        Users loggedInUser = Users.findByUserName(session.userSession)
+        User loggedInUser = User.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topicnamelabel)
         println(topic)
         //Topic topic = new Topic(params.topicnamelabel, visibility: params.visibility, user: loggedInUser.id)
@@ -172,7 +164,7 @@ class SampleController {
             //Topic value = new Topic(topicName: params.topicnamelabel, user: loggedInUser.id)
             Topic topicToBeDeleted = Topic.findByTopicNameAndUser(params.topicnamelabel, loggedInUser)
             println("delete topic name " + topicToBeDeleted)
-             topicToBeDeleted.delete(flush:true)
+            topicToBeDeleted.delete(flush:true)
             render(text: "topic deleted")
             println("topic deleted")
 
@@ -180,20 +172,20 @@ class SampleController {
     }
 
 
-   /* def upload(){
-        def f = request.getFile('document')
-        if (f.empty) {
-            flash.message = 'file cannot be empty'
-            render(text: 'choose another file')
-            return
-        }
+    /* def upload(){
+         def f = request.getFile('document')
+         if (f.empty) {
+             flash.message = 'file cannot be empty'
+             render(text: 'choose another file')
+             return
+         }
 
-        f.transferTo(new File('/home/agrima/Documents/document.txt'))
-        response.sendError(200, 'Done')
-    }*/
+         f.transferTo(new File('/home/agrima/Documents/document.txt'))
+         response.sendError(200, 'Done')
+     }*/
 
     def shareDocumentFinal() {
-        Users loggedInUser = Users.findByUserName(session.userSession)
+        User loggedInUser = User.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topiclabel)
         println(topic)
         DocumentResource documentResource = new DocumentResource(document: params.document)
@@ -210,7 +202,7 @@ class SampleController {
         response.sendError(200, 'Done')
 
         //if (params.document) {
-          //  upload()
+        //  upload()
         //}
         // MultipartFile multipartFile = params.document
         //documentResource.document = multipartFile.bytes
@@ -294,10 +286,10 @@ class SampleController {
 
     def shareLink() {
 
-        Users loggedInUser = Users.findByUserName(session.userSession)
+        User loggedInUser = User.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topic)
         println(topic)
-        LinkResource linkResource = new LinkResource(link: params.link)
+        LinkResource linkResource = new LinkResource(url: params.url)
         linkResource = linkResource.save(flush: true, failOnError: true)
         println(linkResource.id)
         ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic, linkResource: linkResource)
@@ -308,7 +300,7 @@ class SampleController {
         println(topic.id)
         println(params.topic,)
         println(linkResource.id)
-        println(topic.topicName)
+        println(topic.name)
         println(params)
         linkResource.validate()
         if (linkResource.hasErrors()) {
@@ -329,9 +321,9 @@ class SampleController {
     }
 
     def deleteLink() {
-        Users loggedInUser = Users.findByUserName(session.userSession)
+        User loggedInUser = User.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topicnamelabel)
-      //  LinkResource linkResource = LinkResource
+        //  LinkResource linkResource = LinkResource
         println(topic)
         //Topic topic = new Topic(params.topicnamelabel, visibility: params.visibility, user: loggedInUser.id)
         println("deletingggggg")
@@ -339,7 +331,7 @@ class SampleController {
         println(loggedInUser)
         println("topic ki id")
         println(topic)
-        if (Topic.findByUserAndTopicName(loggedInUser, topic.topicName)) {
+        if (Topic.findByUserAndTopicName(loggedInUser, topic.name)) {
             //Topic value = new Topic(topicName: params.topicnamelabel, user: loggedInUser.id)
             Topic topicToBeDeleted = Topic.findByTopicNameAndUser(params.topicnamelabel, loggedInUser)
             println("delete topic name " + topicToBeDeleted)
@@ -355,7 +347,7 @@ class SampleController {
     }
 
     def subscribeTopic() {
-        Users loggedInUser = Users.findByUserName(session.userSession)
+        User loggedInUser = User.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topicnamelabel)
         println("   >>>>>>>")
         println("logged in user")
@@ -367,8 +359,8 @@ class SampleController {
             seriousness = params.selectType.toInteger()
         }
         if (topic.visibility == VisibilityEnum.PUBLIC.getVal()) {
-            Subscription subscription = new Subscription(subscribedTopic: params.topicnamelabel,
-                    seriousness: seriousness, user: loggedInUser.id, topic: topic.id)
+            Subscription subscription = new Subscription(topic: topic,
+                    seriousness: seriousness, user: loggedInUser.id)
 
             subscription.validate()
             if (subscription.hasErrors()) {
@@ -390,9 +382,9 @@ class SampleController {
             //println(Topic.findByUserName)
             println("logged in user")
             println(loggedInUser)
-            if (Topic.findByUserAndTopicName(loggedInUser, topic.topicName)) {
-                Subscription subscription = new Subscription(subscribedTopic: params.topicnamelabel, seriousness: seriousness,
-                        user: loggedInUser.id, topic: topic.id)
+            if (Topic.findByUserAndTopicName(loggedInUser, topic.name)) {
+                Subscription subscription = new Subscription(topic: topic, seriousness: seriousness,
+                        user: loggedInUser.id)
 
                 subscription.validate()
                 if (subscription.hasErrors()) {
@@ -413,7 +405,7 @@ class SampleController {
             println("403: Bad params")
         }
 
- }
+    }
 //    def showTopics() {
 //        def topics= Topic.list()
 //        [topics:topics]
@@ -433,11 +425,11 @@ class SampleController {
 
     def topicsCreatedByParticularUser(){
         int count=0;
-        Users loggedInUser = Users.findByUserName(session.userSession)
+        User loggedInUser = User.findByUserName(session.userSession)
 
         List list = Topic.createCriteria().list(){
             eq('user',loggedInUser)
-                   }
+        }
 
 
 
@@ -449,11 +441,11 @@ class SampleController {
         println(users)
         println(Topic)
         println ("no. of topics " + count)
-       // List list []
-       // model: [list.]
+        // List list []
+        // model: [list.]
 
-       //render (view:"abc", model: [ list: users.topicName])
-       // def t = users.topicName.list()
+        //render (view:"abc", model: [ list: users.topicName])
+        // def t = users.topicName.list()
         render(users.topicName)
         //println(t)
     }
@@ -461,37 +453,37 @@ class SampleController {
         render(view: "emailSender.gsp")
     }
 
-  def subscribedTopicsOfParticularUser() {
-      Users loggedInUser = Users.findByUserName(session.userSession)
-      println ("users......................")
-      println (loggedInUser)
-      List users =Subscription.findAllByUser(loggedInUser)
-      render(text: "users")
-      println(users)
-      println (Subscription)
-      println (Subscription.get(Subscription))
+    def subscribedTopicsOfParticularUser() {
+        User loggedInUser = User.findByUserName(session.userSession)
+        println ("users......................")
+        println (loggedInUser)
+        List users =Subscription.findAllByUser(loggedInUser)
+        render(text: "users")
+        println(users)
+        println (Subscription)
+        println (Subscription.get(Subscription))
 //      List users =Subscription.findByUsers(loggedInUser)
 //      println (users)
 
-      //render users.list() as JSON
-      //List list = java.util.Arrays.asList("users");
-             // List <Users> abc =Subscription.findAllByUserId(loggedInUser.id)
+        //render users.list() as JSON
+        //List list = java.util.Arrays.asList("users");
+        // List <Users> abc =Subscription.findAllByUserId(loggedInUser.id)
 
-     // println(abc)
+        // println(abc)
 
     }
     def markAsRead(){
 
-        Users loggedInUser = Users.findByUserName(session.userSession)
+        User loggedInUser = User.findByUserName(session.userSession)
         List readingItem = ReadingItem.findAllById(loggedInUser)
         println(loggedInUser)
         println(readingItem)
         readingItem(resource,user: loggedInUser,isRead: true)
         //LinkResource linkResource  LinkResource(link: params.link)
-       // Topic topic = Topic.findByTopicName(params.topic)
-       // println(topic)
-       // ReadingItem readingItem = new ReadingItem(resource,  loggedInUser)
-       // ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic, linkResource: linkResource)
+        // Topic topic = Topic.findByTopicName(params.topic)
+        // println(topic)
+        // ReadingItem readingItem = new ReadingItem(resource,  loggedInUser)
+        // ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic, linkResource: linkResource)
         println ("reading item " + readingItem)
 //
 
@@ -500,9 +492,9 @@ class SampleController {
         //ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic, linkResource: linkResource)
         //ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic)
         println("     zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
-       // println(resourceData)
+        // println(resourceData)
 
-       // println params
+        // println params
         render (text:"Marked As Read Successfully !!! ")
 
         //flash.message = "Marked As Read Successfully !!! "
@@ -579,7 +571,7 @@ class SampleController {
 //    }
 //
     def shareDoc() {
-        Users user = Users.findByUserName(session.userSession)
+        User user = User.findByUserName(session.userSession)
         Topic topic = Topic.findByTopicName(params.topiclabel)
         def file1 = request.getFile("document")
         String dir1 = new Date()
@@ -593,24 +585,8 @@ class SampleController {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def subscribedTopicOfUser() {
-        Users loggedInUser = Users.findByUserName(session.userSession)
+        User loggedInUser = User.findByUserName(session.userSession)
         println(loggedInUser)
         def val = loggedInUser.id
 //        List<Users> usersList = Users.findAll()
@@ -619,14 +595,21 @@ class SampleController {
 //        }
         List<Topic> topicList = Topic.findAll()
         topicList.each{
-            println (it.topicName + it.loggedInUser)
+            println (it.name + it.loggedInUser)
         }
         //println(Users.findAllWhere()*.topicName)
     }
+    def forgotPassword(){
+        User user = User.findByUserNameOrEmail(params.usernamelabel)
+        println (user)
+        redirect(controller: 'EmailSender', action: 'send')
+
+
+    }
 }
 
-        //def subscribedTopicOfUser = Subscription*.findAllWhere(topic :subscribedTopicOfUser)
-        println (subscribedTopicOfUser)
+//def subscribedTopicOfUser = Subscription*.findAllWhere(topic :subscribedTopicOfUser)
+//println (subscribedTopicOfUser)
 //        def c = Subscription.createCriteria()
 //        def results = c.list {
 //            like("holderFirstName", "Fred%")
@@ -643,60 +626,60 @@ class SampleController {
 
 
 
-        /* Topic topic = new Topic()
-         if(topic.visibility.equals("public")){
-            render(text:"topic.name")
+/* Topic topic = new Topic()
+ if(topic.visibility.equals("public")){
+    render(text:"topic.name")
 
-    }
-
-
-    def shareDocument() {
-        Users users1 = Users.findByUserNameAndPassword(params.usernamelabel, params.passwordlabel)
-        if (user1 != null) {
-            def requiredParams = ['documentlabel', 'descriptionlabel', 'topiclabel']
-            requiredParams.each { singleParam ->
-                if (!params.containsKey(singleParam)) {
-                    render(text: "enter all fields")
-
-                    return 0
-                }
-
-            }
-            // Users user = new Users(firstName: params.firstnamelabel, lastName: params.lastnamelabel, email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel, confirmPassword: params.confirmpasswordlabel)
-            if (params.documentlabel) {
-                MultipartFile multipartFile = params.documentlabel
-                users1.filepath = multipartFile.bytes
-            }
-            users1.validate() dashboard
-            users1.errors.allErrors.each {
-                println "Errors" + it
-            }
-            println params
-            if (users1.save(flush: true)) {
-                render(text: "succesfully put in DB")
-                //redirect (action: "dashboard")
-
-            } else {
-                render(text: "fail to put in DB")
-            }
-
-        }
-    }
-    //UPDATE USER KI PROFILE
-    /*def editProfile() {
-
-        render(view: "editProfilePage")
-    }
-
-    def popUp() {def logout = {
-   session.invalidate()
-    redirect("action": "homePage")
 }
-        render(view: "shareLinkComponent")
+
+
+def shareDocument() {
+Users users1 = Users.findByUserNameAndPassword(params.usernamelabel, params.passwordlabel)
+if (user1 != null) {
+    def requiredParams = ['documentlabel', 'descriptionlabel', 'topiclabel']
+    requiredParams.each { singleParam ->
+        if (!params.containsKey(singleParam)) {
+            render(text: "enter all fields")
+
+            return 0
+        }
+
     }
+    // Users user = new Users(firstName: params.firstnamelabel, lastName: params.lastnamelabel, email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel, confirmPassword: params.confirmpasswordlabel)
+    if (params.documentlabel) {
+        MultipartFile multipartFile = params.documentlabel
+        users1.filepath = multipartFile.bytes
+    }
+    users1.validate() dashboard
+    users1.errors.allErrors.each {
+        println "Errors" + it
+    }
+    println params
+    if (users1.save(flush: true)) {
+        render(text: "succesfully put in DB")
+        //redirect (action: "dashboard")
+
+    } else {
+        render(text: "fail to put in DB")
+    }
+
+}
+}
+//UPDATE USER KI PROFILE
+/*def editProfile() {
+
+render(view: "editProfilePage")
+}
+
+def popUp() {def logout = {
+session.invalidate()
+redirect("action": "homePage")
+}
+render(view: "shareLinkComponent")
+}
 def logout = {
-   session.invalidate()
-    redirect("action": "homePage")
+session.invalidate()
+redirect("action": "homePage")
 }
 }
 
@@ -704,25 +687,27 @@ SESSSION:
 
 SESSION ENDS
 def logout() {
-   log.info "User agent: " + request.getHeader("User-Agent")
-   session.invalidate()
-   redirect(action: "login")
+log.info "User agent: " + request.getHeader("User-Agent")
+session.invalidate()
+redirect(action: "login")
 }
 
 }
-  def beforeInterceptor = {
-   println "Tracing action ${actionUri}"
+def beforeInterceptor = {
+println "Tracing action ${actionUri}"
 }
 def interceptorAction(){
-   println("interceptor called")
+println("interceptor called")
 }
 
 def paramsBind() {
-   Book book = new Book()
-   bindData(book, params, [exclude: ['author']])
-   println(book.name)
-   render text: "params bind" + book.name + "." + book.author
+Book book = new Book()
+bindData(book, params, [exclude: ['author']])
+println(book.name)
+render text: "params bind" + book.name + "." + book.author
 }
 }*/
+
+
 
 

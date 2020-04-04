@@ -1,6 +1,6 @@
 package sample
 
-class LinkResource  {
-    String link;
+class LinkResource extends ResourceData {
+    String url;
     //static belongsTo = [resource: ResourceData]
 }

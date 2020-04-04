@@ -2,16 +2,16 @@ package sample
 
 class ResourceData {
     String name
-   // Users createdBy
-    // Topic topicName
+    String description
+    User createdBy
+    Topic topic
     Date dateCreated
     Date lastUpdated
 
-    static hasMany = [readingItem: ReadingItem, resourceRating: ResourceRating]
-    static belongsTo = [user: Users, topicName: Topic, linkResource: LinkResource, documentResource: DocumentResource]
+    static hasMany = [readingItems: ReadingItem, resourceRatings: ResourceRating]
+    static belongsTo = [user: User, topic: Topic]
 
     static constraints = {
-        linkResource nullable: true
-        documentResource nullable: true
+
     }
 }

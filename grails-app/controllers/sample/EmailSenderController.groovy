@@ -6,12 +6,12 @@ class EmailSenderController {
         mailService.sendMail {
             to "Agrima.Kesarwani@rxlogix.com"
             subject "subject in mail"
-            body "body  mail"
+            html "body  mail"
         }
 
         flash.message = "Message sent at "+new Date()
-        redirect action:"emailSender"
-        //render("sent")
+        //redirect action:"emailSender"
+        render("sent")
     }
     def test(){
      render("hello")

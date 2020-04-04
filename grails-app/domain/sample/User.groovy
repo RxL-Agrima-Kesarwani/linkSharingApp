@@ -1,5 +1,5 @@
 package  sample
-class Users {
+class User {
 
     String firstName
     String lastName
@@ -7,17 +7,16 @@ class Users {
     String userName
     String password
     String confirmPassword
-    //Byte[] photo
     Byte [] photo
 
-    //static transients = ['confirmPassword']
-    //Boolean admin
-    //Boolean active
+    static transients = ['confirmPassword']
+    Boolean admin
+    Boolean active
 
     Date lastUpdated
     Date dateCreated
 
-    static hasMany = [topic: Topic, subscription: Subscription, resource: ResourceData, readingitem: ReadingItem, resouceRating: ResourceRating]
+    static hasMany = [topics: Topic, subscriptions: Subscription, resources: ResourceData, readingitems: ReadingItem, resouceRatings: ResourceRating]
 
     static constraints = {
 
@@ -44,7 +43,7 @@ class Users {
     static mapping = {
         sort "firstName"
         lastName  column: 'lname'
-        autoTimeStamp:false
+        //autoTimeStamp:false
        // photo(size:0..5000000)  // to store files upto 5MB approx
         }
        // photo(photo(sqlType:"BLOB") :"BLOB")

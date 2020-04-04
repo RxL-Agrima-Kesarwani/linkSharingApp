@@ -28,7 +28,8 @@
                 </div>
                 <div class="row">
                     <div class="col-8">
-                        <button type="button" class="btn btn-link">Forget Password?</button>
+                       <g:link controller="sample" action="forgotPassword">
+                                              Forgot Password</g:link>
                     </div>
                     <div class="col-4">
                         <button type="submit" class="btn btn-success">Submit</button>
