@@ -36,7 +36,7 @@
                         <g:render template = "sendInvitation" />
                     </div>
                     <div class = "">
-                        <g:link controller="sample" action="logout">
+                        <g:link action="logout">
                         Log Out</g:link>
                     </div>
                 </div>

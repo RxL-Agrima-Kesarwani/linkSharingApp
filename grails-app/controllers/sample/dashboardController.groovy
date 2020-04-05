@@ -57,10 +57,11 @@ class dashboardController {
 
         }
     }
-    def logout = {
+    def logout () {
         session.invalidate()
-        redirect("action": "homePage")
-        print("log out")
+        //println("log outttt")
+        redirect(controller: "login", action: "homePage")
+        //print("log out")
     }
     def deleteTopic() {
         Person loggedInUser = Person.findByUserName(session.userSession)
@@ -82,15 +83,16 @@ class dashboardController {
 
         }
     }
-    def shareLink() {
+   def shareLink() {
 
         Person loggedInUser = Person.findByUserName(session.userSession)
-        Topic topic = Topic.findByTopicName(params.topic)
+        Topic topic = Topic.findByName(params.long('topic'))
         println(topic)
         LinkResource linkResource = new LinkResource(url: params.url)
         linkResource = linkResource.save(flush: true, failOnError: true)
         println(linkResource.id)
-        ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic, linkResource: linkResource)
+        ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id,
+                name: params.topic, linkResource: linkResource)
         //ResourceData resourceData = new ResourceData(user: loggedInUser.id, topicName: topic.id, name: params.topic)
         println("     zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
         println(resourceData)
@@ -117,6 +119,49 @@ class dashboardController {
         render(text: "Link saved")
 
     }
+
+    def shareLinkFinal() {
+        Person loggedInUser = Person.findByUserName(session.userSession)
+        Topic topic = Topic.findById(params.long('topiclabel'))
+        println(topic)
+        println(params)
+        if(topic && params.link){
+            println ("inside if")
+            //MultipartFile multipartFile = params.document
+            //String filePath = "/home/agrima/Documents/${multipartFile.getOriginalFilename()}"
+            //File file = new File(filePath)
+            //file.bytes = multipartFile.bytes
+            println("url")
+//            LinkResource linkResource= new LinkResource(url: params.link,name:"resource1",
+//                    description: "linkAdded",createdBy: loggedInUser,topic:topic)
+            LinkResource linkResource= new LinkResource(url: params.link,createdBy: loggedInUser,topic:topic)
+            println("url")
+            if (linkResource.validate()) {
+                println("after validate")
+                topic.addToResources(linkResource)
+                topic.save()
+                println("after save")
+                linkResource.save(flush: true,failOnError: true)
+                println("link  added successfully")
+                flash.linkMessage = 'Url added successfully'
+
+                //redirect(controller : "dashboard",action: "dashboard")
+                redirect(action : "dashboard")
+                return
+            } else {
+                flash.linkError = " Unable to add url"
+                println(" Unable to add url")
+
+                redirect(controller: "dashboard", action: "dashboard")
+                return
+                //redirect(action : "dashboard")
+            }
+        }
+
+
+    }
+
+
     def shareDocumentFinal() {
         Person loggedInUser = Person.findByUserName(session.userSession)
         Topic topic = Topic.findById(params.long('topiclabel'))

@@ -27,13 +27,13 @@
                          <div class="input-group-prepend">
                             <span class="input-group-text" id="usernamelabel">Username/Email*</span>
                          </div>
-                            <input id="username" type="text" class="form-control" placeholder="Username" aria-label="Username" name="username">
+                            <input id="username" type="text" class="form-control" placeholder="Username" aria-label="Username" name="usernamelabel">
                     </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend ">
                         <span class="input-group-text" id="passwordlabel">Password*</span>
                     </div>
-                    <input id="password" type="password" class="form-control" placeholder="Password" aria-label="password" name="password">
+                    <input id="password" type="password" class="form-control" placeholder="Password" aria-label="password" name="passwordlabel">
                 </div>
                 <div class="row">
                     <div class="col-8">

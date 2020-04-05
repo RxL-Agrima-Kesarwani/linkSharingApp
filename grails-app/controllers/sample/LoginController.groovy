@@ -12,22 +12,12 @@ class LoginController {
             maxResults(5)
             order("dateCreated", "desc")
         }
-        render(view: "homePageLinkSharing.gsp", model: [information: recentPosts])
+        render(view: "homePageLinkSharing", model: [information: recentPosts])
        //  render(view: "homePageLinkSharing.gsp")
     }
 
     def register() {
         println params
-        def requiredParams = ['firstnamelabel', 'lastnamelabel', 'emaillabel', 'usernamelabel', 'passwordlabel',
-                              'confirmpasswordlabel']
-        requiredParams.each { singleParam ->
-            if (!params.containsKey(singleParam)) {
-                //flash.registerError = "Registration Failed.Kindly register again."
-                //redirect(controller : 'login',action: "dashboard")
-                redirect(action : "homePage")
-                return 0
-            }
-        }
         Person user = new Person(firstName: params.firstnamelabel, lastName: params.lastnamelabel,
                 email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel,
                 confirmPassword: params.confirmpasswordlabel)
@@ -38,7 +28,7 @@ class LoginController {
         println params
         if (user.save(flush: true)) {
             flash.registerMessage = "Successfully registered"
-            redirect(controller : 'login',action: "dashboard")
+            redirect(controller : 'login',action: "homePage")
 
         } else {
             flash.registerError = "Registration Failed.Kindly register again."
@@ -48,16 +38,7 @@ class LoginController {
     }
 
     def login() {
-        def requiredParams = ['username', 'password']
-        requiredParams.each { singleParam ->
-            if (!params.containsKey(singleParam)) {
-                flash.loginError = "Kindly fill all mandatory fields"
-               redirect(controller: 'login', action : "homePage")
-               // render("aaaaaaaa")
-                return 0
-            }
-        }
-        Person loggedInUser = Person.findByUserNameAndPassword(params.usernamelabel,params.passwordlabel)
+      Person loggedInUser = Person.findByUserNameAndPassword(params.usernamelabel,params.passwordlabel)
 //         if (loggedInUser?.photo) {
 //            String encoded = Base64.getEncoder().encodeToString(loggedInUser.photo)
 //            session.setAttribute("userPhoto", encoded)
@@ -69,6 +50,8 @@ class LoginController {
             redirect(controller : 'dashboard',action: "dashboard")
             } else {
             flash.loginError = "Invalid credentials"
+            redirect(action: "homePage")
+
             }
     }
 }

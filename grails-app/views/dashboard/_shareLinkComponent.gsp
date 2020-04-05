@@ -19,7 +19,7 @@
                                                         <div class="alert alert-primary" role="alert" >
                                                           ${flash.message}</div>
                                                         </g:if>
-                        <g:uploadForm name="shareLink"  action = "shareLink">
+                        <g:uploadForm name="shareLink" controller ="dashboard" action = "shareLinkFinal">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="link">Link*</span>

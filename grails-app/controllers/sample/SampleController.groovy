@@ -14,7 +14,7 @@ class SampleController {
         def c = ResourceData.createCriteria()
         def recentPosts = c.list {
             maxResults(5)
-            order("dateCreated", "desc")
+            order("dateCreated", "desc")document
         }
         render(view: "homePageLinkSharing.gsp", model: [information: recentPosts])
        // render(view: "homePageLinkSharing.gsp")

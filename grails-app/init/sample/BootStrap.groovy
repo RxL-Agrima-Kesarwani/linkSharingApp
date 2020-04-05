@@ -69,19 +69,17 @@ class BootStrap {
         }
     }*/
 
-/*  void createTopic() {
-    Person user = Person.findById(1)
-      println(".............")
-      println("user "+ user)
+ void createTopic() {
         if (!Topic.count()) {
-           // List users = Person.findBy(userName:"Agrima2")
-             List users = Person.findById(user)
-            println("users====" + users)
-            List topics = ["red", VisibilityEnum.PUBLIC, user]
-                          //["blue", VisibilityEnum.PUBLIC, Person?.findByUserName("Agrima2")]]
+
+           // println("users====" + users)
+            List topics = [     ["red", VisibilityEnum.PUBLIC, Person.findById(1)],
+                                ["blue", VisibilityEnum.PRIVATE, Person.findById(1)],
+                                ["black", VisibilityEnum.PRIVATE, Person.findById(2)]  ]
 
             topics.each { topicList ->
-                Topic topic = new Topic(name: topicList[0], visibility: topicList[1], createdBy: topicList[2])
+                Topic topic = new Topic(name: topicList[0], visibility: topicList[1],
+                 createdBy: topicList[2],user:topicList[2])
                   if (topic.validate()) {
                       topic.save(flush: true)
                 }
@@ -92,13 +90,13 @@ class BootStrap {
                 }
             }
         }
-    }*/
+    }
 
 
 
     def init = { servletContext ->
         createUser()
-       //createTopic()
+       createTopic()
     }
     def destroy = {
     }
