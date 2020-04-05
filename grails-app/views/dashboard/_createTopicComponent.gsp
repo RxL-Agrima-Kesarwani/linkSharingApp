@@ -10,13 +10,13 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                  <g:if test="${flash.error}">
+                  <g:if test="${flash.topicError}">
                   <div class="alert alert-primary" role="alert" >
-                    ${flash.error}</div>
+                    ${flash.topicError}</div>
                   </g:if>
-                   <g:if test="${flash.message}">
+                   <g:if test="${flash.topicMessage}">
                                     <div class="alert alert-primary" role="alert" >
-                                      ${flash.message}</div>
+                                      ${flash.topicMessage}</div>
                                     </g:if>
 
                         <g:uploadForm name="createTopic"  action = "addTopic">

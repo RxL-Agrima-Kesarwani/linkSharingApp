@@ -16,7 +16,8 @@ class Person {
     Date lastUpdated
     Date dateCreated
     static transients = ['confirmPassword']
-    static hasMany = [topics: Topic, subscriptions: Subscription, resources: ResourceData, readingitems: ReadingItem, resouceRatings: ResourceRating]
+    static hasMany = [topics: Topic, subscriptions: Subscription, resources: ResourceData,
+                      readingitems: ReadingItem, resouceRatings: ResourceRating]
 
     static constraints = {
 
@@ -44,29 +45,9 @@ class Person {
     static mapping = {
         sort "firstName"
         lastName column: 'lname'
-        //autoTimeStamp:false
-        // photo(size:0..5000000)  // to store files upto 5MB approx
-    }
+        }
     // photo(photo(sqlType:"BLOB") :"BLOB")
 
-    static void func() {
 
-    }
 }
 
-   /*static mapping = {
-        table 'Users'
-        firstName column: 'fname', type: 'text'
-        lastName  column: 'lname', type: 'text'
-        userName  column: 'uname', type: 'text'
-       id name: 'personId'
-        autoTimestamp(false)
-        sort("firstName": "desc")
-        version(false)
-        addresses cascade: 'all-delete-orphan'
-    }
-
-
-
-
-}*/

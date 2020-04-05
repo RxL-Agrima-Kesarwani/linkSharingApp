@@ -2,8 +2,7 @@ package sample
 
 class Subscription {
     Topic topic
-   SeriousnessEnum seriousness = SeriousnessEnum.VERY_SERIOUS
-   // Integer seriousness
+   SeriousnessEnum seriousness = SeriousnessEnum.VERY_SERIOUS//we are giving s default value here
     Person user
     Date dateCreated
 

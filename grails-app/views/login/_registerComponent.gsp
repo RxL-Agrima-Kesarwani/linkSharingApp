@@ -4,13 +4,13 @@
     </div>
     <div class="card-body">
         <div class="form-group">
-        <g:if test="${flash.error}">
+        <g:if test="${flash.registerError}">
                           <div class="alert alert-primary" role="alert" >
-                            ${flash.error}</div>
+                            ${flash.registerError}</div>
                           </g:if>
-                           <g:if test="${flash.message}">
+                           <g:if test="${flash.registerMessage}">
                                             <div class="alert alert-primary" role="alert" >
-                                              ${flash.message}</div>
+                                              ${flash.registerMessage}</div>
                                             </g:if>
         <g:uploadForm name="register"  action = "register">
             <div class="input-group mb-3">

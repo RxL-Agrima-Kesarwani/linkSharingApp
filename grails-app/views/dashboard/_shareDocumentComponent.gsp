@@ -11,13 +11,13 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                    <g:if test="${flash.error}">
+                    <g:if test="${flash.documentError}">
                                       <div class="alert alert-primary" role="alert" >
-                                        ${flash.error}</div>
+                                        ${flash.documentError}</div>
                                       </g:if>
-                                       <g:if test="${flash.message}">
+                                       <g:if test="${flash.documentMessage}">
                                                         <div class="alert alert-primary" role="alert" >
-                                                          ${flash.message}</div>
+                                                          ${flash.documentMessage}</div>
                                                         </g:if>
                         <g:uploadForm name="shareDocument"  action = "shareDocumentFinal">
                             <div class="input-group mb-3">

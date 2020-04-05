@@ -1,8 +1,6 @@
 package sample
 
 class DocumentResource extends  ResourceData{
-    // String document
-    //Byte [] document
     //Byte[] document
     String filePath
 

@@ -2,28 +2,14 @@ package sample
 
 import org.springframework.web.multipart.MultipartFile
 
-class dashboardController {
-    def mailService
-    static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
-
-    def dashboard() {
-        if (session.userSession) {
-            List <Topic> topicList = Topic.list()
-            //render (action : "index")
-           // render("dasgboard")
-           render(view: "dashboard", model: [topicList:topicList])
-        } else {
-            redirect(controller : "login",action: "homePage")
-            //redirect(action: "homePage")
-        }
-    }
+class DashboardService {
     def addTopic() {
         Person loggedInUser = Person.findByUserName(session.userSession)
         Topic topicAdded = Topic.findByNameAndUser(params.topicnamelabel,loggedInUser)
         println(topicAdded)
         if (topicAdded) {
             //When user is creating topic
-          //  flash.error = " topic already exists "
+            //  flash.error = " topic already exists "
             flash.topicError = "topic already exists "
             redirect(action: "dashboard")
             return
@@ -156,84 +142,4 @@ class dashboardController {
 
 
     }
-    def subscribeTopicView(){
-        render (view:"subscribeTopic")
-    }
-
-    def subscribeTopic() {
-        Person loggedInUser = Person.findByUserName(session.userSession)
-        Topic topic = Topic.findByName(params.topicnamelabel)
-        println("   >>>>>>>")
-        println("logged in user")
-        println(loggedInUser.id)
-        println("topic ki id")
-        println(topic.id)
-        //String seriousness = SeriousnessEnum.VERY_SERIOUS//as if not mentioned it has to be very serious
-        subscribe(loggedInUser,topic,params.seriousness)
-        redirect(action: "dashboard")
-
-
-    }
-    def subscribe(Person loggedInUser,Topic topic,String seriousness){
-        // if (topic.visibility == VisibilityEnum.PUBLIC.toString()) {
-        Subscription subscription = new Subscription(topic: topic,
-                user: loggedInUser.id)
-        if(seriousness){
-            subscription.seriousness = SeriousnessEnum."${seriousness}"
-        }
-
-
-        if (subscription.validate()) {
-            subscription.save(flush: true)
-            flash.message = "Subscribed"
-        }
-        //topic.validate(["topicName", "visibility"])
-        println params
-
-        println("...................visible")
-        println(topic.visibility)
-        //topic.validate(["topicName", "visibility"])
-
-        //render(text: "topic subscribed")
-        //render(text: "subscribed")
-        //}
-//        else if (topic.visibility == VisibilityEnum.PRIVATE.toString()) {
-//            println("TOPIC ID: " )
-//            //println(Topic.findByUserName)
-//            println("logged in user")
-//            println(loggedInUser)
-//            if (Topic.findByUserAndTopicName(loggedInUser, topic.name)) {
-//                Subscription subscription = new Subscription(topic: topic,
-//                        seriousness: SeriousnessEnum."${seriousness}",
-//                        user: loggedInUser.id)
-//
-//
-//                if (subscription.validate()) {
-//                    subscription.save(flush: true)
-//                }
-//                //topic.validate(["topicName", "visibility"])
-//                println params
-//
-//               // render (text: "subscribed")
-//            }
-//        }
-
-
-    }
-//    def showTopics() {
-//        def topics= Topic.list()
-//        [topics:topics]
-//    }
-//    def publicTopicsNotCreatedByUser(){
-//        Users loggedInUser = Users.findByUserName(session.userSession)
-//        List publicTopicsNotCreatedByUser = Topic.createCriteria().list(){
-//            and{
-//                not{'in' {"users" ,loggedInUser}}
-//                eq("visibility", VisibilityEnum.PUBLIC.getVal())
-//            }
-//        }
-//        println(publicTopicsNotCreatedByUser)
-//        render(text :publicTopicsNotCreatedByUser )
-//    }
-
 }

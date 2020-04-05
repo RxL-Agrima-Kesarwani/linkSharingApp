@@ -1,8 +1,7 @@
 package sample
 
 class BootStrap {
-
-    void createUser() {
+  void createUser() {
         if (!Person.count()) {
             List users = [["Agrima2", "Agrima2", "kesarwani", "abc123@gmail.com", true, true, "Agrima21"],
                           ["Agrima3", "Agrima3", "kesarwani", "abc1234@gmail.com", false, true, "Agrima31"]]
@@ -26,10 +25,80 @@ class BootStrap {
     }
 
 
+    /*void createUser() {
+        if (!Person.count()) {
+            List users = [["Agrima", "Agrima", "kesarwani", "agrimakesarwani1997@gmail.com", true, true, "Agrima1"],
+                            ["Agrima2", "Agrima2", "kesarwani", "abc123@gmail.com", true, true, "Agrima21"],
+                            ["Agrima3", "Agrima3", "kesarwani", "abc1234@gmail.com", false, true, "Agrima31"]]
+
+            users.each { userList ->
+                Person user = new Person(userName: userList[0], firstName: userList[1], lastName: userList[2],
+                        email: userList[3],
+                        isAdmin: userList[4], isActive: userList[5], password: userList[6],
+                        confirmPassword: userList[6])
+
+                if (user.validate()) {
+                    user.save(flush: true)
+                    println( "user is" + user.userName)
+             Topic topic =    new Topic(createdBy: user, name: "red", visibility: VisibilityEnum.PUBLIC)
+                topic.save(failOnError: true)
+//                    List topics = [["red", VisibilityEnum.PUBLIC, user.userName],["blue", VisibilityEnum.PUBLIC, user.userName]]
+//                    println("topics")
+//                    topics.each { topicList ->
+//                        Topic topic = new Topic(name: topicList[0], visibility: topicList[1], createdBy: topicList[2])
+                        if (topic.validate()) {
+                            topic.save(flush: true)
+                            println(topic.name)
+                            println(topic.createdBy)
+                        }
+                        else{
+                            topic.errors.allErrors.each{
+                                println it.toString()
+                                println("else" + topic.name)
+                            }
+                        }
+                    }
+                else {
+                    user.errors.allErrors.each {
+                        println it.toString()
+                    }
+                }
+            //println("user : "+ user[0])
+
+            }
+        }
+    }*/
+
+/*  void createTopic() {
+    Person user = Person.findById(1)
+      println(".............")
+      println("user "+ user)
+        if (!Topic.count()) {
+           // List users = Person.findBy(userName:"Agrima2")
+             List users = Person.findById(user)
+            println("users====" + users)
+            List topics = ["red", VisibilityEnum.PUBLIC, user]
+                          //["blue", VisibilityEnum.PUBLIC, Person?.findByUserName("Agrima2")]]
+
+            topics.each { topicList ->
+                Topic topic = new Topic(name: topicList[0], visibility: topicList[1], createdBy: topicList[2])
+                  if (topic.validate()) {
+                      topic.save(flush: true)
+                }
+                else{
+                      topic.errors.allErrors.each{
+                        println it.toString()
+                    }
+                }
+            }
+        }
+    }*/
+
 
 
     def init = { servletContext ->
         createUser()
+       //createTopic()
     }
     def destroy = {
     }

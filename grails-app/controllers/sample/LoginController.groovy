@@ -13,7 +13,7 @@ class LoginController {
             order("dateCreated", "desc")
         }
         render(view: "homePageLinkSharing.gsp", model: [information: recentPosts])
-        // render(view: "homePageLinkSharing.gsp")
+       //  render(view: "homePageLinkSharing.gsp")
     }
 
     def register() {
@@ -22,7 +22,8 @@ class LoginController {
                               'confirmpasswordlabel']
         requiredParams.each { singleParam ->
             if (!params.containsKey(singleParam)) {
-                flash.error = "Kindly fill all mandatory fields"
+                //flash.registerError = "Registration Failed.Kindly register again."
+                //redirect(controller : 'login',action: "dashboard")
                 redirect(action : "homePage")
                 return 0
             }
@@ -36,21 +37,23 @@ class LoginController {
         }
         println params
         if (user.save(flush: true)) {
-            flash.message = "Successfully registered"
-            redirect(action: "homePage")
+            flash.registerMessage = "Successfully registered"
+            redirect(controller : 'login',action: "dashboard")
+
         } else {
-            flash.error = "Registration Failed.Kindly register again..."
-            redirect(action: "homePage")
+            flash.registerError = "Registration Failed.Kindly register again."
+           redirect(action: "homePage")
             }
 
     }
 
     def login() {
-        def requiredParams = ['usernamelabel', 'passwordlabel']
+        def requiredParams = ['username', 'password']
         requiredParams.each { singleParam ->
             if (!params.containsKey(singleParam)) {
-                flash.error = "Kindly fill all mandatory fields"
-                redirect(action : "homePage")
+                flash.loginError = "Kindly fill all mandatory fields"
+               redirect(controller: 'login', action : "homePage")
+               // render("aaaaaaaa")
                 return 0
             }
         }
@@ -62,11 +65,10 @@ class LoginController {
         if (loggedInUser != null) {
                 //if (loggedInUser) {
             session.userSession = loggedInUser.userName
-            flash.message = "Login successful"
-            redirect(controller : "dashboard",action: "dashboard")
-             } else {
-            flash.error = "Invalid credentials"
-            //render(text: "Invalid username or email")
-        }
+            flash.loginMessage = "Login successful"
+            redirect(controller : 'dashboard',action: "dashboard")
+            } else {
+            flash.loginError = "Invalid credentials"
+            }
     }
 }
