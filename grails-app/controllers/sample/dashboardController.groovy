@@ -127,14 +127,10 @@ class dashboardController {
         println(params)
         if(topic && params.link){
             println ("inside if")
-            //MultipartFile multipartFile = params.document
-            //String filePath = "/home/agrima/Documents/${multipartFile.getOriginalFilename()}"
-            //File file = new File(filePath)
-            //file.bytes = multipartFile.bytes
-            println("url")
-//            LinkResource linkResource= new LinkResource(url: params.link,name:"resource1",
-//                    description: "linkAdded",createdBy: loggedInUser,topic:topic)
-            LinkResource linkResource= new LinkResource(url: params.link,createdBy: loggedInUser,topic:topic)
+          println("url")
+           LinkResource linkResource= new LinkResource(url: params.link,createdBy: loggedInUser,
+                   name : "url",description:"url added",
+                    topic:topic,user:loggedInUser)
             println("url")
             if (linkResource.validate()) {
                 println("after validate")
@@ -175,7 +171,7 @@ class dashboardController {
             file.bytes = multipartFile.bytes
             println("bytes")
             DocumentResource documentResource = new DocumentResource(filePath:filePath,name:"resource1",
-                    description: "docAdded",createdBy: loggedInUser,topic:topic)
+                    description: "docAdded",createdBy: loggedInUser,topic:topic,user:loggedInUser)
             println("bytes")
             if (documentResource.validate()) {
                 println("after validate")
@@ -198,8 +194,6 @@ class dashboardController {
                 //redirect(action : "dashboard")
             }
         }
-
-
     }
     def subscribeTopicView(){
         render (view:"subscribeTopic")

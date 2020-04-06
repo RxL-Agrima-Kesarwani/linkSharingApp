@@ -3,7 +3,8 @@ package sample
 import org.springframework.web.multipart.MultipartFile
 
 class SampleController {
-     def mailService
+     //def mailService
+    def emailService
        static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
 
     def index() {
@@ -14,7 +15,7 @@ class SampleController {
         def c = ResourceData.createCriteria()
         def recentPosts = c.list {
             maxResults(5)
-            order("dateCreated", "desc")document
+            order("dateCreated", "desc")
         }
         render(view: "homePageLinkSharing.gsp", model: [information: recentPosts])
        // render(view: "homePageLinkSharing.gsp")
@@ -607,13 +608,9 @@ subscription.seriousness = SeriousnessEnum."${seriousness}"
     def forgotPassword(){
         Person user = Person.findByUserName(params.usernamelabel)
        if (user){
-               mailService.sendMail {
-                   to user.email
-                   subject "Reset Password"
-                   html  view: "/sample/_resetPassword", model: [userName: user.userName, resetUrl:
-                           "http://localhost:8060/sample/resetPassword?userName=${user.userName}"]
+              // mailService.sendMail {
+                emailService.send(user.userName, user.email)
 
-               }
                flash.message = "Reset email send successfully"
                redirect (action:"forgotPasswordView")
               // render("sent")
@@ -656,23 +653,22 @@ subscription.seriousness = SeriousnessEnum."${seriousness}"
         }
         Person user = Person.findByUserName(params.usernamelabel)
 
-        if(user){
-            user.password=params.passwordlabel
+        if(user) {
+            user.password = params.passwordlabel
             user.validate()
-            if(user.save(flush: true)){
+            if (user.save(flush: true)) {
                 flash.message = "SUCCESSFULLY UPDATED PASSWORD"
-               // render(text: "succesfully updated password")
+                // render(text: "succesfully updated password")
                 redirect(action: "homePage")
 
-            }
-            else {
+            } else {
 
                 flash.error = "Failed to update password .Try again"
                 //redirect(action: "resetPasswordView")
-               // render("Failed to update password .Try again")
-                redirect(action : "resetPasswordView")
+                // render("Failed to update password .Try again")
+                redirect(action: "resetPasswordView")
             }
-
+        }
         }
 //        println("reset")
 //         user.validate()
@@ -695,7 +691,7 @@ subscription.seriousness = SeriousnessEnum."${seriousness}"
             render("Failed to update password .Try again")
         }*/
 
-    }
+
 }
 
 //def subscribedTopicOfUser = Subscription*.findAllWhere(topic :subscribedTopicOfUser)

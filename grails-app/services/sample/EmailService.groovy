@@ -1,15 +1,16 @@
 package sample
 
-class EmailService {
-    def send() {
-        mailService.sendMail {
-            to "Agrima.Kesarwani@rxlogix.com"
-            subject "subject in mail"
-            html "body  mail"
-        }
+    class EmailService {
+        def mailService
 
-        flash.message = "Message sent at "+new Date()
-        //redirect action:"emailSender"
-        render("sent")
+        def send(String userName, String email ) {
+            mailService.sendMail {
+                to email
+                subject "Reset Password"
+                html  view: "/sample/_resetPassword", model: [userName: userName, resetUrl:
+                        "http://localhost:8060/sample/resetPasswordView?userName=${userName}"]
+            }
+        }
     }
-}
+
+

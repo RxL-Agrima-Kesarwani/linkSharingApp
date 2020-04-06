@@ -4,7 +4,7 @@ class ResourceData {
     String name
     String description
     Person createdBy
-    Topic topic
+   // Topic topic
     Date dateCreated
     Date lastUpdated
 
