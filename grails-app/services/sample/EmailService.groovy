@@ -11,6 +11,13 @@ package sample
                         "http://localhost:8060/sample/resetPasswordView?userName=${userName}"]
             }
         }
+        def send( String email,String subject,String viewName ,Map viewModel ) {
+            mailService.sendMail {
+                to email
+                subject subject
+                html  view: viewName, model: viewModel
+            }
+        }
     }
 
 

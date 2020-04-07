@@ -19,7 +19,7 @@
                                                         <div class="alert alert-primary" role="alert" >
                                                           ${flash.message}</div>
                                                         </g:if>
-                        <g:uploadForm name="createTopic"  action = "subscribeTopicView">
+                        <g:uploadForm name="createTopic"  action = "subscribeTopic">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="name"> Topic Name*</span>

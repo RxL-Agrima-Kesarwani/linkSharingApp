@@ -13,10 +13,7 @@
                     <div class = "">
                         Link Sharing Application
                     </div>
-                    <div class = "">
-                        <img width = "100px" height = "120px"
-                        src="data:image/jpg;base64,${session.getAttribute("userPhoto")}"/>
-                    </div>
+
                     <div class = "">
                         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                     </div>
@@ -44,7 +41,8 @@
                     <div class="container-fluid ">
                         <div class="row">
                             <div class = "col-4">
-                                <g:render template = "dashboardProfileLeft"  model="[posts: information]" />
+                                <g:render template = "dashboardLeftComponent"  model = "[userInfo:userInfo]" />
+                                 <g:render template = "subscribeTopic" />
                             </div>
                             <div class = "col-8">
                                 <g:render template = "inboxDashboard" />

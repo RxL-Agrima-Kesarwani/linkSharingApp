@@ -9,17 +9,26 @@
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
+                 <h5 class="modal-title">Delete Topic</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
 
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                        <g:if test="${flash.deleteTopicError}">
+                                                          <div class="alert alert-primary" role="alert" >
+                                                            ${flash.deleteTopicError}</div>
+                                                          </g:if>
+                                                           <g:if test="${flash.deleteTopicMessage}">
+                                                                            <div class="alert alert-primary" role="alert" >
+                                                                              ${flash.deleteTopicMessage}</div>
+                                                                            </g:if>
                         <g:uploadForm name="deleteTopic"  action = "deleteTopic">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="name"> Topic Name*</span>
                                 </div>
-                                <input id="name" type="text" class="form-control" placeholder="Name"  name="topicnamelabel">
+                                  <g:select from="${topicList}" class="form-control"  name="topiclabel"   optionKey="id" optionValue="name" />
                             </div>
                              <div class="row">
                                 <div class="col-8">

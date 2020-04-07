@@ -21,9 +21,14 @@ class LoginController {
         Person user = new Person(firstName: params.firstnamelabel, lastName: params.lastnamelabel,
                 email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel,
                 confirmPassword: params.confirmpasswordlabel)
-        if (params.photo) {
+        if (!params.photo.isEmpty()) {
             MultipartFile multipartFile = params.photo
             user.photo = multipartFile.bytes
+            println(",,,,,,,,,,,,,,,,,,,if")
+        } else {
+            println(">>>>>>>>>>>>>>>>>>>>>else")
+            File defaultPhoto = new File("assets/images/displayUser.png")
+            user.photo = defaultPhoto.bytes
         }
         println params
         if (user.save(flush: true)) {
@@ -46,6 +51,8 @@ class LoginController {
         if (loggedInUser != null) {
                 //if (loggedInUser) {
             session.userSession = loggedInUser.userName
+            String encoded = Base64.getEncoder().encodeToString(loggedInUser.photo)
+            session.setAttribute("userPhoto", encoded)
             flash.loginMessage = "Login successful"
             redirect(controller : 'dashboard',action: "dashboard")
             } else {
