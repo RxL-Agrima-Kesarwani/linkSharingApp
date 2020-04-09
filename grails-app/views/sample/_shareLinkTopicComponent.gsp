@@ -1,17 +1,13 @@
 <div class="container">
-
-    <!-- Trigger the modal with a button -->
-    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#sendInvitationModal">Send Invitation</button>
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#shareLinkModal">Share Link</button>
     <!-- Modal -->
-    <div class="modal fade" id="sendInvitationModal" role="dialog">
+    <div class="modal fade" role="dialog" id="shareLinkModal">
         <div class="modal-dialog">
-
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
-                      <h5 class="modal-title">Send Invitation</h5>
+                <h5 class="modal-title">Share Link</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -23,35 +19,36 @@
                                                         <div class="alert alert-primary" role="alert" >
                                                           ${flash.message}</div>
                                                         </g:if>
-                        <g:uploadForm name="sendInvitation"  action = "sendInvitation">
+                        <g:uploadForm name="shareLink" controller ="dashboard" action = "shareLinkFinal">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" id="emailId"> Email id*</span>
+                                    <span class="input-group-text" id="link">Link*</span>
                                 </div>
-                                <input id="name" type="text" class="form-control" placeholder="Email id"  name="emailId">
+                                <input id="username" type="text" class="form-control" placeholder="Link"  name="link">
                             </div>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend ">
-                                    <span class="input-group-text" id="description">Topic*      </span>
+                                    <span class="input-group-text" id="description">Description*</span>
                                 </div>
-                            <g:select from="${topicList}" class="form-control"  name="topiclabel"   optionKey="id" optionValue="name" />
-
+                                <input id="description" type="text" class="form-control" placeholder="Description"  name="description">
                             </div>
-                            <div class="row">
-                                <div class="col-8">
-                                    <button type="submit" class="btn btn-success">Invite</button>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend ">
+
+                                    <span class="input-group-text" id="topic">Topic*</span>
                                 </div>
-
+                                 <g:select from="${topicList}" class="form-control"  name="topiclabel"   optionKey="id" optionValue="name" />
                             </div>
+                            <button type="submit" class="btn btn-success">Share</button>
                         </g:uploadForm>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button"  class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 </div>

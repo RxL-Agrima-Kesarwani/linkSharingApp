@@ -6,7 +6,7 @@ class Topic {
     Date dateCreated
     VisibilityEnum visibility = VisibilityEnum.PRIVATE
     Person createdBy
-   // Integer visibility
+
     static hasMany = [subscriptions: Subscription, resources: ResourceData]
 
     static belongsTo = [user: Person]

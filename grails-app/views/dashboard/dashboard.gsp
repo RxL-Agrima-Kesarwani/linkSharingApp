@@ -36,6 +36,19 @@
                         <g:link action="logout">
                         Log Out</g:link>
                     </div>
+                     <div class = "">
+                         <select name="Page" id="Page">
+                                        <option selected>${userInfo.userName}</option>
+                                         <option value="Profile" controller="sample" action="editProfile">Profile</option>
+                                        <option value="Users">Users</option>
+                                        <option value="Topic">Topic</option>
+                                        <option value="Posts">Posts</option>
+                                        <option value="Logout">
+                                         <g:link action="logout"> Log Out</g:link>
+                                        </option>
+                                    </select>
+                      </div>
+
                 </div>
                 <div class="card-body">
                     <div class="container-fluid ">
@@ -47,6 +60,7 @@
                             <div class = "col-8">
                                 <g:render template = "inboxDashboard" />
                                 <g:render template = "deleteTopic"/>
+
                             </div>
                         </div>
                     </div>

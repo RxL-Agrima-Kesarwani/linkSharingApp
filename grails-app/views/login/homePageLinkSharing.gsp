@@ -1,3 +1,4 @@
+
 <html>
     <head>
         <title>homePage</title>
@@ -29,8 +30,8 @@
                     <div class="container-fluid ">
                         <div class="row">
                             <div class = "col-7">
-                                <g:render template = "recentShares" model="[posts: information]" />
-                                <g:render template = "topPosts" model="[posts: information]" />
+                             <g:render template = "recentShares" model="[recentShares: recentShares]" />
+                              <g:render template = "topPosts" model="[topPosts: topPosts]" />
                             </div>
                             <div class = "col-5">
                                 <g:render template = "loginComponent" />
@@ -48,3 +49,4 @@
 
     </body>
 </html>
+

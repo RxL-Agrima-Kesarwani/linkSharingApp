@@ -1,9 +1,10 @@
 package sample
 
 class ReadingItem {
-    ResourceData resource
-    Person user
+
     Boolean isRead = Boolean.FALSE
+    Date dateCreated
+    Date lastUpdated
 
     static belongsTo = [user: Person, resource:ResourceData]
 }

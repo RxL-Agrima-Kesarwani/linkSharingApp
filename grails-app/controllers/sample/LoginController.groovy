@@ -4,7 +4,9 @@ import org.springframework.web.multipart.MultipartFile
 
 class LoginController {
     def mailService
+    def userService
     static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
+    static defaultAction = "homePage"
 
     def homePage() {
         def c = ResourceData.createCriteria()
@@ -12,53 +14,55 @@ class LoginController {
             maxResults(5)
             order("dateCreated", "desc")
         }
-        render(view: "homePageLinkSharing", model: [information: recentPosts])
-       //  render(view: "homePageLinkSharing.gsp")
+        println(recentPosts.size())
+        //println("full name" + user.getFullName())
+        //render(view: "homePageLinkSharing", model: [recentPosts: userInfo(), topPosts: userInfo()])
+       render(view: "homePageLinkSharing", model: [recentPosts: recentPosts, topPosts: recentPosts])
     }
-
     def register() {
-        println params
-        Person user = new Person(firstName: params.firstnamelabel, lastName: params.lastnamelabel,
-                email: params.emaillabel, userName: params.usernamelabel, password: params.passwordlabel,
-                confirmPassword: params.confirmpasswordlabel)
-        if (!params.photo.isEmpty()) {
-            MultipartFile multipartFile = params.photo
-            user.photo = multipartFile.bytes
-            println(",,,,,,,,,,,,,,,,,,,if")
-        } else {
-            println(">>>>>>>>>>>>>>>>>>>>>else")
-            File defaultPhoto = new File("assets/images/displayUser.png")
-            user.photo = defaultPhoto.bytes
-        }
-        println params
-        if (user.save(flush: true)) {
-            flash.registerMessage = "Successfully registered"
-            redirect(controller : 'login',action: "homePage")
+        Person user = userService.register(params.firstnamelabel, params.lastnamelabel,
+                params.emaillabel, params.usernamelabel,
+                params.passwordlabel, params.confirmpasswordlabel,params.photo)
 
-        } else {
-            flash.registerError = "Registration Failed.Kindly register again."
-           redirect(action: "homePage")
-            }
-
-    }
-
-    def login() {
-      Person loggedInUser = Person.findByUserNameAndPassword(params.usernamelabel,params.passwordlabel)
-//         if (loggedInUser?.photo) {
-//            String encoded = Base64.getEncoder().encodeToString(loggedInUser.photo)
-//            session.setAttribute("userPhoto", encoded)
-//        }
-        if (loggedInUser != null) {
-                //if (loggedInUser) {
-            session.userSession = loggedInUser.userName
-            String encoded = Base64.getEncoder().encodeToString(loggedInUser.photo)
-            session.setAttribute("userPhoto", encoded)
-            flash.loginMessage = "Login successful"
-            redirect(controller : 'dashboard',action: "dashboard")
+            if (user.validate()) {
+                flash.registerMessage = "Successfully registered"
             } else {
-            flash.loginError = "Invalid credentials"
-            redirect(action: "homePage")
+                flash.registerError = "Registration Failed.Kindly register again."
 
             }
+        redirect(controller: 'login', action: "homePage")
+        }
+        def login() {
+            Person loggedInUser =  Person.fetchPerson(params.usernamelabel,params.passwordlabel)
+            println("logged in now")
+            if (loggedInUser?.photo) {
+                //if (this.photo) {
+                String encoded = Base64.getEncoder().encodeToString(loggedInUser.photo)
+                session.setAttribute("userPhoto", encoded)
+            }
+            if (loggedInUser != null) {
+                session.userSession = loggedInUser.userName
+
+                flash.loginMessage = "Login successful"
+                redirect(controller: 'dashboard', action: "dashboard")
+            } else {
+                flash.loginError = "Invalid credentials"
+                redirect(action: "homePage")
+
+            }
+        }
+
+        def userInfo() {
+            Person loggedInUser = Person.findByUserName(session.userSession)
+            List<Topic> topicList = Topic.list()
+            def value = ResourceData.createCriteria()
+            def lists = value.list {
+                eq('class',"sample.DocumentResource")
+            }
+            println(lists)
+            String fullName = loggedInUser.firstName + " " + loggedInUser.lastName
+            return [name: fullName, userName: loggedInUser.userName]
+        }
+
     }
-}
+

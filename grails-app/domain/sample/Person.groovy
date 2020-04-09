@@ -8,16 +8,14 @@ class Person {
     String password
     String confirmPassword
     Byte[] photo
-
-
     Boolean isAdmin
     Boolean isActive
 
     Date lastUpdated
     Date dateCreated
-    static transients = ['confirmPassword']
+    static transients = ['confirmPassword','fullName']
     static hasMany = [topics: Topic, subscriptions: Subscription, resources: ResourceData,
-                      readingitems: ReadingItem, resouceRatings: ResourceRating]
+                      readingItems: ReadingItem, resouceRatings: ResourceRating]
 
     static constraints = {
 
@@ -46,8 +44,19 @@ class Person {
         sort "firstName"
         lastName column: 'lname'
         }
-    // photo(photo(sqlType:"BLOB") :"BLOB")
-
+    public static Person fetchPerson(String userName, String password) {
+        //Person.createCriteria().get{
+         Person.createCriteria().get{
+            or{
+                eq('userName',userName )
+                eq('email',userName )
+            }
+            eq('password',password )
+        }
+    }
+  String  getFullName(){
+        firstName + " " +lastName
+    }
 
 }
 

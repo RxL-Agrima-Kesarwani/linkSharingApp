@@ -4,12 +4,18 @@ import org.springframework.web.multipart.MultipartFile
 
 class DashboardController {
     def mailService
+    def EmailService
     def dashboardService
+    def userService
     static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
-
+    static defaultAction = "dashboard"
     def dashboard() {
         if (session.userSession) {
+          //  List<Topic> topicList = Topic.findByNameWhere(createdBy:session)
             List<Topic> topicList = Topic.list()
+           // List <Topic> topicListLoggedInUser = Topic.findByCreatedBy(session.userSession)
+            //println("topic:.................. " + topicListLoggedInUser.name)
+            //render(view: "dashboard", model: [topicListLoggedInUser: topicListLoggedInUser, userInfo: userInformation()])
             render(view: "dashboard", model: [topicList: topicList, userInfo: userInformation()])
         } else {
             redirect(controller: "login", action: "homePage")
@@ -26,8 +32,28 @@ class DashboardController {
             return
         }
         dashboardService.addTopic(loggedInUser, params.topicnamelabel, params.visibility)
-        flash.topicMessage = "Topic  with name ${params.topicnamelabel} ssfully added"
+        flash.topicMessage = "Topic  with name ${params.topicnamelabel} is added successfully."
         redirect(action: "dashboard")
+    }
+    def userInformation(){
+        Person loggedInUser = Person.findByUserName(session.userSession)
+        dashboardService.userInformation(loggedInUser)
+
+    }
+
+    def download(){
+        String filePath = "/home/agrima/Documents/${multipartFile.getOriginalFilename()}"
+        File file = new File(filePath)
+
+        if (file.exists()) {
+            response.setContentType("application/octet-stream")
+            response.setHeader("Content-disposition", "filename=${file.name}")
+            response.outputStream << file.bytes
+            return
+        }
+        else{
+            flash.error = "File does not exists"
+        }
     }
 
     def logout() {
@@ -35,6 +61,14 @@ class DashboardController {
         //println("log outttt")
         redirect(controller: "login", action: "homePage")
         //print("log out")
+    }
+    def sendInvitation(){
+       // String user = "Agrima"
+        String user = dashboardService.userInformation()
+        String email = "agrimakesarwani1997@gmail.com"
+       // String subject = "Send invitation subject"
+        EmailService.send(user,email)
+        //String email,String subject,String viewName ,Map viewModel
     }
 
     def deleteTopic() {
@@ -110,19 +144,20 @@ class DashboardController {
 
     }
 
-//
     def subscribeTopicView() {
         render(view: "subscribeTopic")
     }
 
     def subscribeTopic() {
+        println(params)
         Person loggedInUser = Person.findByUserName(session.userSession)
         Topic topic = Topic.findByName(params.topicnamelabel)
         println("   >>>>>>>")
+
         println("logged in user")
         println(loggedInUser.id)
         println("topic ki id")
-        println(topic.id)
+        //println(topic.id)
         //String seriousness = SeriousnessEnum.VERY_SERIOUS//as if not mentioned it has to be very serious
         subscribe(loggedInUser, topic, params.seriousness)
         redirect(action: "dashboard")
@@ -144,42 +179,57 @@ class DashboardController {
         println("...................visible")
         println(topic.visibility)
     }
-    //topic.validate(["topicName", "visibility"])
-
-    //render(text: "topic subscribed")
-    //render(text: "subscribed")
-    //}
-//        else if (topic.visibility == VisibilityEnum.PRIVATE.toString()) {
-//            println("TOPIC ID: " )
-//            //println(Topic.findByUserName)
-//            println("logged in user")
-//            println(loggedInUser)
-//            if (Topic.findByUserAndTopicName(loggedInUser, topic.name)) {
-//                Subscription subscription = new Subscription(topic: topic,
-//                        seriousness: SeriousnessEnum."${seriousness}",
-//                        user: loggedInUser.id)
+//    def userInformation() {
+//        Person loggedInUser = Person.findByUserName(session.userSession)
+//      println(loggedInUser.subscriptions.size())
+//        Integer countTopic = Topic.countByCreatedBy(loggedInUser)
+//        Integer countSubscription = Subscription.countByUser(loggedInUser)
+//       List<Topic> topicList = Topic.list()
+//      // Topic t = Topic.findByNameAndCreatedBy(loggedInUser)
+//     //println(t)
+//      // println("topic:.................. " + topicList.name)
+//       println("topic id:"+ topicList.id)
+//     // List<Topic> topicList = Topic.list()
+//      //List <Topic> topicListLoggedInUser = Topic.findByCreatedBy(loggedInUser)
+//      // println("topic:.................. " + topicListLoggedInUser.name)
+//       println("topic id:"+ topicList.id)
 //
+//       def value = ResourceData.createCriteria()
+//       def lists = value.list {
+//        eq('class',"sample.DocumentResource")
+//       }
+//       println(lists)
+////       ResourceData resourceData = ResourceData.findByUserAndTopic(loggedInUser,topicList.name)
+//    // println("Resource " + resourceData)
+//        String fullName = loggedInUser.firstName + " " + loggedInUser.lastName
+//       return [name: fullName, userName: loggedInUser.userName, countTopic: countTopic,
+//               countSubscription:countSubscription]
 //
-//                if (subscription.validate()) {
-//                    subscription.save(flush: true)
-//                }
-//                //topic.validate(["topicName", "visibility"])
-//                println params
+//    }
+//    def inboxInformation(){
+//        Person loggedInUser = Person.findByUserName(session.userSession)
+//        String fullName = loggedInUser.firstName + " " + loggedInUser.lastName
+//        List<Topic> topicList = Topic.list()
+//        println("topic:.................. " + topicList.name)
+//        println("topic id:"+ topicList.id)
+//        return(name: fullName, username: loggedInUser.userName, topic:topicList.name)
 //
-//               // render (text: "subscribed")
-//            }
-//        }
+//    }
 
-    def userInformation() {
-        Person loggedInUser = Person.findByUserName(session.userSession)
-        Integer countTopic = Topic.countByCreatedBy(loggedInUser)
-        Integer countSubscription = Subscription.countByUser(loggedInUser)
-        String fullName = loggedInUser.firstName + " " + loggedInUser.lastName
+    def trendingTopics(){
+        def result = ResourceData.createCriteria().list(){
+            projections {
+                count("id", "myCount")
+            }
+            groupProperty("topic")
+            order("myCount","desc")
+            maxResults(5)
+            }
+        println (result)
+        return result
+        }
 
-        return [name: fullName, userName: loggedInUser.userName, countTopic: countTopic,
-        countSubscription:countSubscription]
     }
-}
 
 //   def showTopics() {
 //        def topics= Topic.list()

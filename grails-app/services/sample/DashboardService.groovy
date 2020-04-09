@@ -31,10 +31,17 @@ class DashboardService {
         return subscription
 
     }
-    def logout = {
-        session.invalidate()
-        redirect("action": "homePage")
-        print("log out")
+
+    def userInformation(Person loggedInUser) {
+        Integer countTopic = Topic.countByCreatedBy(loggedInUser)
+        Integer countSubscription = Subscription.countByUser(loggedInUser)
+//        def resourceData = ResourceData.findByCreatedById(loggedInUser)
+//        println("description >>>>>>>>>>>>>>>>>" +resourceData.description)
+        String fullName = loggedInUser.firstName + " " + loggedInUser.lastName
+        return [name: fullName, userName: loggedInUser.userName, countTopic: countTopic,
+                countSubscription:countSubscription]
+//        return [name: fullName, userName: loggedInUser.userName, countTopic: countTopic,
+//                countSubscription:countSubscription,resourceData:resourceData]
     }
 
 

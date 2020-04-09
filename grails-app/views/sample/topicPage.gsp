@@ -21,14 +21,17 @@
 							<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 						</div>
 						<div class = "col-2">
-							<g:render template = "shareLinkComponent" />
+							<g:render template = "shareLinkTopicComponent" />
 							</div>
 							<div class = "col-2">
-								<g:render template = "shareDocumentComponent" />
+								<g:render template = "shareDocumentTopicComponent" />
 								</div>
 								<div class = "col-2">
-									<img style="width: inherit" width = "100px" height = "120px"
-									src="data:image/jpg;base64,${session.getAttribute("userPhoto")}"/>
+									<select name="TopicPage" id="TopicPage">
+                                     <option selected>${userInfo.userName}</option>
+                                     <option value="Profile">Profile</option>
+                                     <option value="Users">Users</option>
+                                      </select>
 								</div>
 							</div>
 						</div>
@@ -39,13 +42,14 @@
 						<div class="container-fluid ">
 							<div class="row">
 								<div class = "col-4">
-									<g:render template = "shareDocumentComponent" />
-										<g:render template = "shareLinkComponent" />
+									<g:render template = "reUsableComponent" />
+										<g:render template = "reUsableComponent" />
 										</div>
-									</div>
+
 									<div class = "col-8">
-										<g:render template = "inboxDashboard" />
-											<g:render template = "deleteTopic"/>
+										<g:render template = "postsTopic" />
+											<!--g:render template = "deleteTopic"/-->
+												<!--g:render template = "topicComponent"/-->
 											</div>
 										</div>
 									</div>

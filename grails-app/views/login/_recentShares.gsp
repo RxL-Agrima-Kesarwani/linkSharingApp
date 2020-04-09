@@ -7,7 +7,7 @@
     </div>
 
     <div class="card-body">
-        <g:each  in="${posts}" var="post" >
+        <g:each  in="${recentShares}" var="post" >
             <g:render template="postSummary" model="[postData: post]" />
         </g:each>
     </div>

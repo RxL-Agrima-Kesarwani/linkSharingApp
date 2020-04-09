@@ -1,6 +1,6 @@
 <div class="card ">
     <div class="card-header d-flex " >
-        <div> Inbox</div>
+        <div> Posts</div>
         <div class="ml-auto">
 
         </div>
@@ -12,7 +12,7 @@
 
             <div class="">
                 <div class="container-fluid">
-                      <g:render template = "reusableComponent"/>
+                      <g:render template = "reUsableComponent"/>
                     <div class="row my-2">
                     <div class="text-muted p-8 mx-2">Description${userInfo.resourceData}</div>
 
@@ -35,7 +35,7 @@
 
             <div class="">
                 <div class="container-fluid">
-                   <g:render template = "reusableComponent"/>
+                   <g:render template = "reUsableComponent"/>
                                       <div class="row my-2">
                                           Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas, cupiditate quo minus praesentium voluptates porro reprehenderit veniam hic, nam.
                                       </div>

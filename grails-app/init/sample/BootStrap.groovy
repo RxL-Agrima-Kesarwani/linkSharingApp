@@ -1,9 +1,11 @@
 package sample
 
 class BootStrap {
-  void createUser() {
+    void createUser() {
         if (!Person.count()) {
-            List users = [["Agrima2", "Agrima2", "kesarwani", "abc123@gmail.com", true, true, "Agrima21"],
+            List users = [["Agrima", "Agrima", "kesarwani", "agrimakesarwani1997@gmail.com", true, true, "Agrima1"],
+                          ["Agrima2", "Agrima2", "kesarwani", "abc123@gmail.com", true, true, "Agrima21"],
+                          ["Agrima4", "Agrima4", "kesarwani", "ab123@gmail.com", true, true, "Agrima41"],
                           ["Agrima3", "Agrima3", "kesarwani", "abc1234@gmail.com", false, true, "Agrima31"]]
 
             users.each { userList ->
@@ -12,130 +14,49 @@ class BootStrap {
                         isAdmin: userList[4], isActive: userList[5], password: userList[6],
                         confirmPassword: userList[6])
 
-                if (user.validate()) {
-                    user.save(flush: true)
-                }
-                else{
-                    user.errors.allErrors.each{
-                        println it.toString()
-                    }
+
+                    user.save(flush: true, failOnError:true)
                 }
             }
         }
-    }
 
-
-    /*void createUser() {
-        if (!Person.count()) {
-            List users = [["Agrima", "Agrima", "kesarwani", "agrimakesarwani1997@gmail.com", true, true, "Agrima1"],
-                            ["Agrima2", "Agrima2", "kesarwani", "abc123@gmail.com", true, true, "Agrima21"],
-                            ["Agrima3", "Agrima3", "kesarwani", "abc1234@gmail.com", false, true, "Agrima31"]]
-
-            users.each { userList ->
-                Person user = new Person(userName: userList[0], firstName: userList[1], lastName: userList[2],
-                        email: userList[3],
-                        isAdmin: userList[4], isActive: userList[5], password: userList[6],
-                        confirmPassword: userList[6])
-
-                if (user.validate()) {
-                    user.save(flush: true)
-                    println( "user is" + user.userName)
-             Topic topic =    new Topic(createdBy: user, name: "red", visibility: VisibilityEnum.PUBLIC)
-                topic.save(failOnError: true)
-//                    List topics = [["red", VisibilityEnum.PUBLIC, user.userName],["blue", VisibilityEnum.PUBLIC, user.userName]]
-//                    println("topics")
-//                    topics.each { topicList ->
-//                        Topic topic = new Topic(name: topicList[0], visibility: topicList[1], createdBy: topicList[2])
-                        if (topic.validate()) {
-                            topic.save(flush: true)
-                            println(topic.name)
-                            println(topic.createdBy)
-                        }
-                        else{
-                            topic.errors.allErrors.each{
-                                println it.toString()
-                                println("else" + topic.name)
-                            }
-                        }
-                    }
-                else {
-                    user.errors.allErrors.each {
-                        println it.toString()
-                    }
-                }
-            //println("user : "+ user[0])
-
-            }
-        }
-    }*/
-
- void createTopic() {
+    void createTopic() {
         if (!Topic.count()) {
-
-           // println("users====" + users)
-            List topics = [     ["red", VisibilityEnum.PUBLIC, Person.findById(1)],
-                                ["blue", VisibilityEnum.PRIVATE, Person.findById(1)],
-                                ["black", VisibilityEnum.PRIVATE, Person.findById(2)]  ]
-
-            topics.each { topicList ->
-                Topic topic = new Topic(name: topicList[0], visibility: topicList[1],
-                 createdBy: topicList[2],user:topicList[2])
-                  if (topic.validate()) {
-                      topic.save(flush: true)
-                }
-                else{
-                      topic.errors.allErrors.each{
-                        println it.toString()
+            List topics = ["Topic1", "Topic2", "Topic3", "Topic4", "Topic5"]
+            Person.list().each { user ->
+                [VisibilityEnum.PUBLIC, VisibilityEnum.PRIVATE].each { visibility ->
+                    topics.each { topicName ->
+                        Topic topic = new Topic(name: topicName, visibility: visibility, user: user, createdBy: user)
+                        topic.save(flush :true, failOnError: true)
                     }
+                }
+            }userName
+        }
+    }
+    void createResource() {
+        if (!ResourceData.count()) {
+            List resources = ["Resource1", "Resource2", "Resource3", "Resource4", "Resource5"]
+            Topic.list().each{topic->
+                resources.each{resourceName->
+                    LinkResource linkResource = new LinkResource(description: resourceName,
+                            createdBy: topic.createdBy,user:topic.createdBy, topic: topic,
+                            url:"http://www.google.com")
+                    linkResource.save(flush :true,failOnError: true)
+                    DocumentResource documentResource = new DocumentResource(description: resourceName,
+                            createdBy: topic.createdBy,user:topic.createdBy, topic: topic, filePath:"/home/agrima/document/document.txt")
+                    documentResource.save(flush :true,failOnError: true)
                 }
             }
         }
     }
-
-
-
     def init = { servletContext ->
         createUser()
-       createTopic()
+        createTopic()
+        createResource()
     }
     def destroy = {
     }
 }
-
-
-/*  if(!Role.findByAuthority("ROLE_ADMIN")){
-Role role = new Role()
-role.authority = "ROLE_ADMIN"
-if(role.save(flush: true)) {
-    println "Role Created"
-} else {
-    println "Error in creating role"
-}
-} else {
-println "Role Exists"
-}
-if(!User.count()) {
-User user = new User()
-user.username = "Agrima.Kesarwani"
-user.password = "Agrima.Kesarwani"
-if(user.save(flush: true)){
-    println "User created"
-    println "Assigning Role"
-    Role role = Role.findByAuthority("ROLE_ADMIN")
-    UserRole userRole = new UserRole()
-    userRole.user = user
-    userRole.role = role
-    if(userRole.save(flush: true)) {
-        println "Role Assigned"
-    } else {
-        println "Error in assinging role"
-    }
-} else {
-    println "Error in creating User"
-}
-} else {
-println "User Exists"
-}*/
 
 
 

@@ -1,10 +1,9 @@
 package sample
 
 class ResourceData {
-    String name
+
     String description
     Person createdBy
-   // Topic topic
     Date dateCreated
     Date lastUpdated
 
@@ -12,6 +11,7 @@ class ResourceData {
     static belongsTo = [user: Person, topic: Topic]
 
     static constraints = {
+        user nullable:true
 
     }
 }
