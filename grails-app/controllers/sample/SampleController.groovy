@@ -28,6 +28,9 @@ class SampleController {
         Person loggedInUser = Person.findByUserName(session.userSession)
         dashboardService.userInformation(loggedInUser)
     }
+    def adminPage(){
+        render(view:"adminPage", model: [userInfo: userInformation()])
+    }
 
     def updateProfile(){
         Person loggedInUser = Person.findByUserName(session.userSession)
@@ -398,6 +401,26 @@ class SampleController {
             //render(view: "topicPage.gsp")
             //render(view : "sample/topic/topicPage.gsp")
         }
+    //CREATE TEMP DIRECTORY
+    public static File createTempDirectory()
+            throws IOException
+    {
+        final File temp;
+
+        temp = File.createTempFile("temp", Long.toString(System.nanoTime()));
+
+        if(!(temp.delete()))
+        {
+            throw new IOException("Could not delete temp file: " + temp.getAbsolutePath());
+        }
+
+        if(!(temp.mkdir()))
+        {
+            throw new IOException("Could not create temp directory: " + temp.getAbsolutePath());
+        }
+
+        return (temp);
+    }
 
 
 //    def publicTopics() {
@@ -477,73 +500,6 @@ class SampleController {
             }
             //println(Users.findAllWhere()*.topicName)
         }
-        def forgotPasswordView() {
-            render(view: "forgotPasswordForm")
-        }
-        def forgotPassword() {
-            Person user = Person.findByUserName(params.usernamelabel)
-            if (user) {
-                // mailService.sendMail {
-                emailService.send(user.userName, user.email)
-
-                flash.message = "Reset email send successfully"
-                redirect(action: "forgotPasswordView")
-                // render("sent")
-            } else {
-                flash.error = "Unable to find user by user name: ${params.usernamelabel}"
-                redirect(action: "forgotPasswordView")
-            }
-
-
-        }
-        def resetPasswordView() {
-            render(view: "resetPasswordForm")
-        }
-//    def resetPassword() {
-//        Person user = Person.findByUserName(session.userSession)
-//        //render("abcd")
-//        //println(user)
-//        //Person user = Person.findByUserName(userName: params.usernamelabel, password: params.passwordlabel,
-//                //confirmPassword: params.confirmpasswordlabel)
-//        println("user " + user)
-//        if(user.password.equals(user.confirmPassword)){
-//            user.password = params.passwordlabel
-//        }
-//   else{
-//       flash.error = "Password and confirm password does not match"
-//    }
-//
-//    }
-
-
-        def resetPassword() {
-            def requiredParams = ['usernamelabel', 'passwordlabel', 'confirmpasswordlabel']
-            requiredParams.each { singleParam ->
-                if (!params.containsKey(singleParam)) {
-                    flash.error = "Enter all values"
-                    return 0
-                }
-            }
-            Person user = Person.findByUserName(params.usernamelabel)
-
-            if (user) {
-                user.password = params.passwordlabel
-                user.validate()
-                if (user.save(flush: true)) {
-                    flash.message = "SUCCESSFULLY UPDATED PASSWORD"
-                    // render(text: "succesfully updated password")
-                    redirect(action: "homePage")
-
-                } else {
-
-                    flash.error = "Failed to update password .Try again"
-                    //redirect(action: "resetPasswordView")
-                    // render("Failed to update password .Try again")
-                    redirect(action: "resetPasswordView")
-                }
-            }
-        }
-
 
     }
 

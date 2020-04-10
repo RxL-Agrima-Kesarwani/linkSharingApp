@@ -23,9 +23,9 @@
                 <img width = "100px" height = "120px"
                 src="data:image/jpg;base64,${session.getAttribute("userPhoto")}"/>
               </div>
-              <g:uploadForm name="topicComponent"  action = "topicComponent">
+              <g:form name="topicComponent" controller="dashboard" onSubmit action = "addTopic">
                 <div class="input-group mb-3">
-                  <input id="topicnamelabel" type="text" class="form-control" placeholder="Topic Name"  name="topicnamelabel">
+                 <input type ="text" name="topicName" class ="form-control" placeholder="Topic Name"/>
                   <button type="submit" class="btn btn-secondary">Save</button>
                 </div>
                 <div class="input-group mb-3">
@@ -36,29 +36,18 @@
                   </div>
                 </div>
                 <div class="input-group mb-3">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="usernamelabel">Public</span>
-                  </div>
-                  <select name="visibility" id="visibility">
-                    <option selected>Public</option>
-                    <option value="1">Private</option>
-                  </select>
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="usernamelabel">Seriousness</span>
+                <g:select from="${["SERIOUS","CASUAL","VERY_SERIOUS"]}" name="seriousness" />
+                <g:select from="${["PUBLIC","PRIVATE"]}" name="visibility" />
 
-                  <select name="seriousness" >
-                    <option selected value= "VERY_SERIOUS">Very Serious</option>
-                    <option value="SERIOUS">Serious</option>
-                    <option value="CASUAL">Casual</option>
-                  </select>
+
                 </div>
-                </div>
-               <g:actionSubmit value="Save" id ="addTopicButton" action="addTopic" />
-                <button type="submit" class="btn btn-secondary" controller ="dashboard" action= "addTopic">Send </button>
+
+              </g:form>
+
+                <button type="submit" class="btn btn-secondary">Send </button>
                 <button type="submit" class="btn btn-secondary">Delete </button>
                 <button type="submit" class="btn btn-secondary">Edit</button>
 
-              </g:uploadForm>
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+<%@ page import="sample.SeriousnessEnum" %>
 <html>
     <head>
         <title>homePage</title>
@@ -27,12 +28,12 @@
                     <div class="container-fluid ">
                         <div class="row">
                             <div class = "col-6">
-                           <g:render template = "reUsableComponent"  model = "[userInfo:userInfo]"/>
-                            <g:render template = "topicComponent" />
+                           <g:render template = "/sample/reUsableComponent"  model = "[userInfo:userInfo]"/>
+                            <g:render template = "/sample/topicComponent" />
                             </div>
                             <div class = "col-6">
-                                <g:render template = "profileComponent" />
-                                <g:render template = "changePasswordComponent" />
+                                <g:render template = "/sample/profileComponent" />
+                                <g:render template = "/login/changePasswordComponent" model="[userName:userName]" />
                             </div>
                         </div>
                     </div>

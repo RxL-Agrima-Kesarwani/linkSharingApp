@@ -32,6 +32,54 @@ class LoginController {
             }
         redirect(controller: 'login', action: "homePage")
         }
+    def resetPasswordView() {
+        render(view: "resetPasswordForm",model:[userName:params.userName])
+    }
+    def forgotPasswordView() {
+        render(view: "forgotPasswordForm")
+    }
+    def resetPassword() {
+        def requiredParams = ['usernamelabel', 'passwordlabel', 'confirmpasswordlabel']
+        requiredParams.each { singleParam ->
+            if (!params.containsKey(singleParam)) {
+                flash.error = "Enter all values"
+                return 0
+            }
+        }
+        Person user = Person.findByUserName(params.usernamelabel)
+
+        if (user) {
+            user.password = params.passwordlabel
+            user.validate()
+            if (user.save(flush: true)) {
+                flash.message = "SUCCESSFULLY UPDATED PASSWORD"
+                // render(text: "succesfully updated password")
+                redirect(action: "homePage")
+
+            } else {
+                flash.error = "Failed to update password .Try again"
+                //redirect(action: "resetPasswordView")
+                // render("Failed to update password .Try again")
+                redirect(action: "resetPasswordView")
+            }
+        }
+    }
+    def forgotPassword() {
+        Person user = Person.findByUserName(params.usernamelabel)
+        if (user) {
+            // mailService.sendMail {
+            emailService.send(user.userName, user.email)
+
+            flash.message = "Reset email send successfully"
+            redirect(action: "forgotPasswordView")
+            // render("sent")
+        } else {
+            flash.error = "Unable to find user by user name: ${params.usernamelabel}"
+            redirect(action: "forgotPasswordView")
+        }
+
+
+    }
         def login() {
             Person loggedInUser =  Person.fetchPerson(params.usernamelabel,params.passwordlabel)
             println("logged in now")

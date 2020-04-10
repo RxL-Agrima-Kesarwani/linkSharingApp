@@ -7,8 +7,8 @@ package sample
             mailService.sendMail {
                 to email
                 subject "Reset Password"
-                html  view: "/sample/_resetPassword", model: [userName: userName, resetUrl:
-                        "http://localhost:8060/sample/resetPasswordView?userName=${userName}"]
+                html  view: "/login/_resetPassword", model: [userName: userName, resetUrl:
+                        "http://localhost:8060/login/resetPasswordView?userName=${userName}"]
             }
         }
         def send( String email,String subject,String viewName ,Map viewModel ) {

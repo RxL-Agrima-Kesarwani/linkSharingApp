@@ -1,18 +1,18 @@
-var addTopic = function(){
+var download = function(){
 $.ajax({
-url:"sample/addTopic",
+url:"sample/download",
 type: "POST"
 data :("name" : "ajax", "visibility":"PUBLIC"),
 success : function(){
-alert("Topic added successfully");
+
 },
 error: function() {
-alert ("Unable to add topic");
+alert ("Unable to download");
 }
 });
 $(document).ready(function(){
-$('#addTopicButton').click(function(){
-addTopic();
+$('#downloadInDashboard').click(function(){
+download();
 });
 $('select#loggedInUserPage').change(function(){
 alert("Page");});

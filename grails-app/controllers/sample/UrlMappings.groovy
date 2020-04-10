@@ -5,7 +5,7 @@ class UrlMappings {
         "/"(controller:"login",action:"homePage")
         "/dashBoard"(controller:"dashboard",action:"dashboard")
         "/topic"(controller:"sample",action:"topicPage")
-        "/editProfile"(controller:"sample",action:"editProfile")
+        "/editProfile"(controller:"person",action:"editProfile")
         "/$controller/$action?/$id?"{
             constraints {
                 // apply constraints here

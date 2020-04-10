@@ -21,7 +21,7 @@
                         <g:img dir="images" file="displayFacebook.png" width="40" height="40"/>
                         <g:img dir="images" file="displayTwitter.png" width="40" height="40"/>
                         <g:img dir="images" file="displayGoogle.png" width="40" height="40"/>
-                        <a href="#" class="ml-auto">Download</a>
+                        <a href="#"  id="downloadInDashboard"class="ml-auto">Download</a>
                                                 <a href="#" class="ml-auto">View full size</a>
                                                 <a href="#" class="ml-auto">Mark as read</a>
                                                 <a href="#" class="ml-auto">View post</a>

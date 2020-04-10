@@ -4,12 +4,14 @@ import grails.transaction.Transactional
 import org.springframework.web.multipart.MultipartFile
 @Transactional
 class DashboardService {
-    public Topic addTopic(Person loggedInUser, String topicName, String visibility) {
+    public Topic addTopic(Person loggedInUser, String topicName,
+                          String visibility,String seriousness=null) {
         Topic topic = new Topic(name: topicName, visibility: VisibilityEnum."${visibility}",
                 user: loggedInUser.id, createdBy: loggedInUser)
         if (topic.validate()) {
             topic.save(flush: true, failOnError: true)
-            Subscription subscription = subscribe(loggedInUser, topic, null)
+            Subscription subscription = subscribe(loggedInUser, topic,
+                    (seriousness?SeriousnessEnum."${seriousness}":null))
             topic.addToSubscriptions(subscription)
 
         }

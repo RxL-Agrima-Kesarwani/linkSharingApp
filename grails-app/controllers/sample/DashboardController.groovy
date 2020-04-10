@@ -21,6 +21,10 @@ class DashboardController {
             redirect(controller: "login", action: "homePage")
         }
     }
+    def print(){
+        render(SeriousnessEnum.valueOf("CASUAL"))
+        //render(SeriousnessEnum.getVal())
+    }
 
     def addTopic() {
         Person loggedInUser = Person.findByUserName(session.userSession)
@@ -35,6 +39,21 @@ class DashboardController {
         flash.topicMessage = "Topic  with name ${params.topicnamelabel} is added successfully."
         redirect(action: "dashboard")
     }
+    def addTopicAjax(){
+        Person loggedInUser = Person.findByUserName(session.userSession)
+        Topic topic = Topic.findByNameAndUser(params.topicName, loggedInUser)
+        println(topic)
+        String message=""
+        if (topic) {
+            message = "topic already exists "
+        }
+        else{
+            topic = dashboardService.addTopic(loggedInUser, params.topicName, params.visibility)
+            message = "Topic  with name ${params.topicnamelabel} is added successfully."
+        }
+      render(message)
+      // render([message:message,topicName:topic.name,visibility:topic.visibility] as JSON)
+    }
     def userInformation(){
         Person loggedInUser = Person.findByUserName(session.userSession)
         dashboardService.userInformation(loggedInUser)
@@ -42,8 +61,9 @@ class DashboardController {
     }
 
     def download(){
-        String filePath = "/home/agrima/Documents/${multipartFile.getOriginalFilename()}"
-        File file = new File(filePath)
+        DocumentResource documentResource = DocumentResource.get(params.resourceId)
+       // String filePath = "/home/agrima/Documents/${multipartFile.getOriginalFilename()}"
+        File file = new File(documentResource.filePath)
 
         if (file.exists()) {
             response.setContentType("application/octet-stream")
@@ -53,6 +73,7 @@ class DashboardController {
         }
         else{
             flash.error = "File does not exists"
+            redirect(action: "dashboard")
         }
     }
 
